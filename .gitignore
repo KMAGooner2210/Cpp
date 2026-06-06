@@ -1,0 +1,15 @@
+build/
+
+
+# Bỏ qua các file object nhị phân và file thực thi tạm thời
+*.o
+*.out
+app
+app_elide
+app_no_elide
+
+# Bỏ qua các file Assembly được sinh ra tự động
+*.s
+
+# Bỏ qua các file cấu hình ẩn của VS Code (tùy chọn)
+.vscode/
