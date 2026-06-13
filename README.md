@@ -888,315 +888,573 @@ int globalCounter = 0;          // Static duration — tồn tại suốt chươ
    </details> 
 
 
+
 <details>
-    <summary><strong>BÀI 2: HỆ THỐNG KIỂU DỮ LIỆU VÀ PHÂN LOẠI BIỂU THỨC</strong></summary>
+    <summary><strong>BÀI 2: BIẾN VÀ KIỂU DỮ LIỆU</strong></summary>
+	
+## **BÀI 2: BIẾN VÀ KIỂU DỮ LIỆU**
 
-## **BÀI 2: HỆ THỐNG KIỂU DỮ LIỆU VÀ PHÂN LOẠI BIỂU THỨC**
+### **I.  KIỂU NGUYÊN THỦY (PRIMITIVE TYPES)**
 
-### **I.  PRIMITIVE TYPES VÀ MEMORY LAYOUT**
+#### **1.1. Biến và quy tắc định danh**
 
-#### **1.1. Kiểu số nguyên, kích thước kiến trúc và `<cstdint>`** 
-
-##### **1.1.1. Các kiểu số nguyên truyền thống** 
-
-* C++ kế thừa từ C các kiểu số nguyên: `short, int, long, long long`.
-
-* Để đảm bảo tính di động đa nền tảng, tiêu chuẩn C++ không quy định kích thước tuyệt đối mà chỉ đưa ra mối quan hệ tương đối:
-
-		sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long) 
-
-* Do đó, kích thước thực tế phụ thuộc vào Data Model của từng hệ điều hành:
-
-	* **LP64 (Linux, macOS):** `int` là 32-bit, `long` và con trỏ là 64-bit.
-
-	* **LLP64 (Windows):** `int` và `long` đều là 32-bit, chỉ `long long` và con trỏ là 64-bit. 
-
-##### **1.1.2. `<cstdint>`** 
-
-* Từ C++11, thư viện chuẩn cung cấp header (và `<stdint.h>` trong C) với các kiểu số nguyên có kích thước cố định
-
-	* Có dấu: `int8_t, int16_t, int32_t, int64_t`
-
-	* Không dấu: `uint8_t, uint16_t, uint32_t, uint64_t`
-
-##### **1.1.3. Kiểu `size_t`** 
-
-* `size_t` là kiểu số nguyên không dấu đặc biệt, có kích thước đủ lớn để biểu diễn kích thước bộ nhớ tối đa mà nền tảng hỗ trợ.
-
-	* Kích thước mảng và bộ nhớ (`sizeof`).
-
-	* Chỉ số khi duyệt container (ví dụ: `std::vector::size()`).
-
-	* Các hàm liên quan đến bộ nhớ trong thư viện chuẩn.  
-
-#### **1.2. Biểu diễn số thực dấu phẩy và kiểm soát sai số**			
-
-##### **1.2.1. Chuẩn IEEE 754**		
-
-*  C++ hỗ trợ hai kiểu số thực chính:
-
-	* `float` (single precision – thường 32-bit)
-
-	* `double` (double precision – thường 64-bit)
-
-*  Cả hai đều tuân thủ chuẩn IEEE 754, một số thực được biểu diễn dưới dạng:
-
-	<img width="452" height="48" alt="Image" src="https://github.com/user-attachments/assets/4e8f50af-5b4c-4807-9a65-fa632456c4f3" />
-
-	* Sign bit: 1 bit (dấu).
-
-	* Exponent: Phần mũ (8 bit với float, 11 bit với double).
-
-	*  Mantissa (Fraction): Phần định trị (23 bit với float, 52 bit với double).
+##### **1.1.1. Định nghĩa** 
+	
+*  Biến là một danh xưng (identifier) đại diện cho một vùng nhớ cụ thể trong hệ thống — thường là trên ngăn xếp (Stack) hoặc phân đoạn dữ liệu (Data segment).
 		
-##### **1.2.2. Vấn đề sai số làm tròn (Floating-point Precision)**		
-
-*  Do sử dụng cơ số 2, nhiều số thập phân không thể được biểu diễn chính xác (ví dụ: 0.1, 0.2).
-
-*  Do đó, so sánh trực tiếp bằng toán tử `== `thường không an toàn:
-
-		double a = 0.1 + 0.2;
-		bool isEqual = (a == 0.3);  // Thường trả về false
-
-#### **1.3. Kiểu ký tự, boolean và hậu tố hằng số (Literal Suffixes)**			
-
-##### **1.3.1. Kiểu ký tự char**	
-
-*  `char` trong C++ bản chất là một kiểu số nguyên 1 byte.
-
-	*  Ví dụ: `char c = 'A'`; thực chất lưu giá trị số nguyên 65 (ASCII).
-		
-* Tiêu chuẩn quy định `sizeof(char) == 1` trên mọi nền tảng.
-
-* Từ C++11 trở lên, ngôn ngữ bổ sung:
-
-	*  `char16_t`(UTF-16)
-		
-	*  `char32_t` (UTF-32)
-		
-	* `char8_t` (UTF-8, từ C++20)
+* Mỗi biến phải được gắn chặt với một kiểu dữ liệu duy nhất trong suốt vòng đời của nó.
 			
-##### **1.3.2. Kiểu Boolean bool**	
+*  Kiểu dữ liệu xác định ba thuộc tính căn bản:
 
-*  Kiểu `bool` biểu diễn hai giá trị `true` và `false`.
+	* Kích thước vùng nhớ được cấp phát (số byte).
+			
+	* Cách diễn giải chuỗi bit nhị phân trong vùng nhớ đó.
+				
+	* Tập hợp các phép toán hợp lệ có thể thực hiện trên biến.
 
-*  Mặc dù chỉ cần 1 bit về mặt logic, nhưng do hạn chế địa chỉ hóa của CPU, `sizeof(bool)` luôn bằng 1 byte.
+				
+##### **1.1.2.Quy tắc định danh**
+	
+*  Chỉ bao gồm chữ cái (A–Z, a–z), chữ số (0–9) và dấu gạch dưới `_`.
+		
+* Không được bắt đầu bằng chữ số.
+			
+* Phân biệt chữ hoa và chữ thường (Case-sensitive): `studentAge` và `studentage` là hai biến hoàn toàn khác nhau. 
+				
+* Tuyệt đối không trùng với các từ khóa dự trữ (Keywords) của C++ như `int`, `class`, `return`, `namespace`...
+				
+		int 3students = 0;     // LỖI: Bắt đầu bằng chữ số
+		int class = 0;         // LỖI: Trùng với từ khóa
+		int student_age = 0;   // HỢP LỆ
+		int studentAge = 0;    // HỢP LỆ
 
-##### **1.3.3. Hậu tố hằng số (Literal Suffixes)**	
+##### **1.1.3.Khuôn mẫu đặt tên (Naming Conventions)**
+	
+*  **camelCase:** 
 
-*  Trình biên dịch suy luận kiểu của hằng số (literal) dựa trên giá trị và hậu tố:
+	* Ký tự đầu chữ thường, mỗi từ tiếp theo viết hoa chữ đầu. Ví dụ: `studentAge`, `engineSpeed`.
+		
+*  **snake_case:** 
 
-	| Literal | Kiểu suy luận mặc định | Hậu tố | Kiểu sau khi ép |
-	|----------|------------------------|---------|------------------|
-	| `10` | `int` | `U` | `unsigned int` |
-	| `10` | `int` | `LL` | `long long` |
-	| `3.14` | `double` | `f` | `float` |
-	| `3.14` | `double` | `L` | `long double` |
+	* Tất cả chữ thường, các từ nối nhau bằng dấu gạch dưới. Ví dụ: `student_age`, `engine_speed`.
+			
+*  **UPPER_SNAKE_CASE:** 
 
+	* Dành riêng cho hằng số và macro. Ví dụ: `MAX_BUFFER_SIZE`, `PI_VALUE`.`engineSpeed`.
+		
+*  **PascalCase:** 
+
+	* Dành cho tên lớp (Class) và kiểu dữ liệu tự định nghĩa. Ví dụ: `MotorController`, `SensorData`.
+							
+#### **1.2. Nhóm kiểu dữ liệu nguyên thủy và Thư viện `<cstdint>`**	
+
+##### **1.2.1.Các kiểu dữ liệu nguyên thủy cơ bản**	
+	
+*  C++ cung cấp hai nhóm kiểu nguyên thủy chính:
+
+	* Nhóm số nguyên (Integer types):
+
+			┌──────────────┬────────────────────────────────┬──────────────────────────┐
+			│ Kiểu         │ Kích thước điển hình           │ Phạm vi (có dấu)         │
+			├──────────────┼────────────────────────────────┼──────────────────────────┤
+			│ short        │ 2 bytes (16 bit)               │ -32,768 → 32,767         │
+			│ int          │ 4 bytes (32 bit) — thông thường│ -2,147,483,648 → ...     │
+			│ long         │ 4 byte (Windows) / 8 byte(Linux│ Phụ thuộc nền tảng       │
+			│ long long    │ 8 bytes (64 bit)               │ ±9.2 × 10¹⁸              │
+			└──────────────┴────────────────────────────────┴──────────────────────────┘
+
+	* Nhóm số thực dấu phẩy động (Floating-point types):
+
+						┌──────────────┬──────────────┬──────────────────────┬──────────────────┐
+			│ Kiểu         │ Kích thước   │ Độ chính xác         │ Tiêu chuẩn       │
+			├──────────────┼──────────────┼──────────────────────┼──────────────────┤
+			│ float        │ 4 bytes      │ ~7 chữ số thập phân  │ IEEE 754 Single  │
+			│ double       │ 8 bytes      │ ~15 chữ số thập phân │ IEEE 754 Double  │
+			│ long double  │ 8-16 bytes   │ Phụ thuộc nền tảng   │ Mở rộng          │
+			└──────────────┴──────────────┴──────────────────────┴──────────────────┘
+	
+##### **1.2.2.Vấn đề phụ thuộc kiến trúc**	
+	
+*  Tiêu chuẩn C++ không quy định cứng kích thước byte của kiểu `int` hay `long` — chúng phụ thuộc vào kiến trúc phần cứng và trình biên dịch.
+
+*  Điều này gây rủi ro nghiêm trọng trong lập trình nhúng đa nền tảng (cross-platform embedded development):
+
+		// Trên Linux x86-64:  sizeof(long) = 8 bytes
+		// Trên Windows x64:   sizeof(long) = 4 bytes
+		// Trên AVR 8-bit MCU: sizeof(int) = 2 bytes
+
+		int sensorValue = 100000; // Hợp lệ trên x86, tràn số trên AVR!
+	
+##### **1.2.3.Thư viện `<cstdint>` (C++11)**
+	
+*  Thư viện này cung cấp các kiểu dữ liệu có kích thước bit cố định, xác định hoàn toàn bất kể nền tảng, trình biên dịch, hay kiến trúc vi xử lý.
+
+		#include <cstdint>
+
+		int8_t   a;   // Chính xác  8-bit có dấu  (-128 → 127)
+		uint8_t  b;   // Chính xác  8-bit không dấu (0 → 255)
+		int16_t  c;   // Chính xác 16-bit có dấu
+		uint16_t d;   // Chính xác 16-bit không dấu
+		int32_t  e;   // Chính xác 32-bit có dấu
+		uint32_t f;   // Chính xác 32-bit không dấu
+		int64_t  g;   // Chính xác 64-bit có dấu
+		uint64_t h;   // Chính xác 64-bit không dấu
+				
+
+
+
+#### **1.3. Kiểu ký tự, Boolean và hậu tố hằng số (Literal Suffixes)**	
+		
+*  **Kiểu ký tự `char`:**
+
+	*  `char` chiếm đúng 1 byte (8 bit) và về bản chất lưu trữ một giá trị số nguyên nhỏ.
+	
+	*  Giá trị số nguyên đó được ánh xạ sang ký tự hiển thị thông qua bảng mã ASCII (hoặc UTF-8).
+		
+			char letter = 'A';        // Lưu giá trị số nguyên 65
+			char digit  = '0';        // Lưu giá trị số nguyên 48
+			char newline = '\n';      // Escape character — ký tự đặc biệt ngắt dòng
+
+			// Minh họa bản chất số nguyên:
+			std::cout << (int)'A';    // In ra: 65
+			std::cout << (char)66;    // In ra: B
+		
+	*  Phân biệt `char` và `char*` / `std::string`:
+	
+		*  `char c = 'A';` — Kiểu nguyên thủy, lưu **một** ký tự duy nhất, dùng dấu nháy đơn `' '`
+		
+		*  `const char* s = "Hello";` — Con trỏ đến mảng ký tự kiểu C, dùng dấu nháy kép `" "`.
+		
+		* `std::string str = "Hello";` — Đối tượng chuỗi hiện đại
+			
+*  **Kiểu Boolean `bool`:**
+
+	*  `bool` lưu trữ trạng thái logic: `true` (biểu diễn nội bộ bằng giá trị `1`) hoặc `false` (biểu diễn bằng `0`).
+	
+			bool isRunning = true;
+			bool hasError  = false;
+
+			// Chuyển đổi ngầm định (Implicit conversion):
+			bool fromInt = 42;     // true — mọi giá trị khác 0 đều là true
+			bool fromZero = 0;     // false
+
+			// In ra giá trị bool:
+			std::cout << std::boolalpha << isRunning; // In ra "true" thay vì "1"
+
+*  **Hậu tố hằng số (Literal Suffixes):**
+
+	*  Ký tự hoặc chuỗi ký tự đặt ngay sau một giá trị hằng số (literal) để ép trình biên dịch hiểu định dạng bộ nhớ chính xác của giá trị đó.
+	
+	*  Nếu không có hậu tố, trình biên dịch áp dụng quy tắc mặc định:
+	
+		* Hằng số nguyên không có hậu tố → kiểu `int`.
+		
+		* Hằng số thực không có hậu tố → kiểu `double`.  
+
+				auto a = 3.14;      // double  (8 bytes) — mặc định
+				auto b = 3.14f;     // float   (4 bytes) — hậu tố f hoặc F
+				auto c = 3.14L;     // long double      — hậu tố L
+
+				auto d = 100;       // int              — mặc định
+				auto e = 100U;      // unsigned int     — hậu tố U
+				auto f = 100L;      // long             — hậu tố L
+				auto g = 100UL;     // unsigned long    — hậu tố UL
+				auto h = 100LL;     // long long        — hậu tố LL
+				auto i = 100ULL;    // unsigned long long — hậu tố ULL
+
+#### **1.4. Cấu trúc đối tượng chuỗi văn bản `std::string`**	
+		
+*  **Cơ sở:**
+
+	*  `std::string` (thuộc thư viện `<string>`) là một đối tượng lớp (Class Object) — không phải kiểu nguyên thủy.
+	
+	*  Nó đóng gói và tự động hóa hoàn toàn việc quản lý vùng nhớ động (Heap) cho chuỗi ký tự.
+		
+*  **Cú pháp và thao tác:**
+
+		#include <string>
+
+		std::string name = "Embedded Systems";  // Khởi tạo
+		std::string empty;                       // Chuỗi rỗng — hợp lệ
+
+		// Nối chuỗi — trực quan, không tràn bộ nhớ
+		std::string greeting = "Hello, " + name + "!";
+
+		// Lấy độ dài
+		std::size_t len = name.length();   // Trả về số ký tự: 16
+		std::size_t sz  = name.size();     // Tương đương length()
+
+		// Truy cập ký tự
+		char first = name[0];              // 'E' — không kiểm tra giới hạn
+		char safe  = name.at(0);          // 'E' — có kiểm tra, ném ngoại lệ nếu OOB
+
+		// Chuỗi con (Substring)
+		std::string sub = name.substr(9, 7);  // "Systems" — bắt đầu từ index 9, dài 7 ký tự
+
+		// Tìm kiếm
+		std::size_t pos = name.find("Systems"); // Trả về index, hoặc std::string::npos nếu không tìm thấy
+			
 ### **II.  KHỞI TẠO VÀ ĐÁNH GIÁ TẠI THỜI GIAN BIÊN DỊCH**
 
-#### **2.1. Uniform Initialization và Narrowing Conversion** 
+#### **2.1. Cú pháp khởi tạo đồng nhất (Uniform Initialization)** 
 
-##### **2.1.1.  Vấn đề C++ Classic** 
+##### **2.1.1.Vấn đề của cú pháp khởi tạo cũ**
+ 
+* Trước C++11, C++ có nhiều cú pháp khởi tạo không nhất quán:
 
-* Trước C++11, C++ hỗ trợ nhiều cách khởi tạo khác nhau (`=, (), {}`), dẫn đến nhiều vấn đề, nổi bật trong đó là lỗi Most Vexing Parse:
+		int a = 5;           // Copy initialization (C truyền thống)
+		int b(5);            // Direct initialization (gọi constructor)
+		int arr[] = {1,2,3}; // Aggregate initialization (chỉ cho mảng/struct)
 
-		Timer t();  // Không tạo đối tượng Timer bằng constructor mặc định
-		            // mà là khai báo một hàm tên t, trả về kiểu Timer, không tham số
+##### **2.1.2.Cú pháp khởi tạo đồng nhất bằng `{}`**
 
+* C++11 giới thiệu cú pháp `{}` (braced initialization / list initialization) như một cú pháp khởi tạo thống nhất cho mọi loại: biến nguyên thủy, mảng, struct, và đối tượng lớp.
+	
+		// Tất cả đều dùng cùng cú pháp {}:
+		int x{5};
+		double pi{3.14159};
+		int arr[]{1, 2, 3, 4, 5};
 
-##### **2.1.2.  Cú pháp khởi tạo đồng nhất (Brace Initialization)** 
+		struct Point { int x; int y; };
+		Point p{10, 20};
 
-* C++11 giới thiệu Uniform Initialization (khởi tạo đồng nhất) sử dụng cặp ngoặc nhọn `{}` làm cú pháp chuẩn duy nhất:
+		std::vector<int> v{1, 2, 3, 4};
+		std::string s{"Hello"};
+	
+##### **2.1.3. Đặc tính**
 
-		int a{5};                    // Khởi tạo biến nguyên thủy
-		int arr[]{1, 2, 3};          // Khởi tạo mảng
-		std::vector<int> v{1, 2, 3}; // Khởi tạo container
-		Timer t{};                   // Khởi tạo đối tượng an toàn (default constructor)
+* Khởi tạo bằng `{}` báo **lỗi biên dịch** ngay lập tức khi lập trình viên cố gán một giá trị vào kiểu không đủ khả năng biểu diễn — thay vì âm thầm cắt bớt dữ liệu.
 
-##### **2.1.3.  Narrowing Conversion** 
+		// Cú pháp cũ — nguy hiểm, im lặng:
+		int x = 3.99;       // Hợp lệ: x = 3 (mất phần thập phân .99)
+		int y = 300;
+		char c = y;         // Hợp lệ: cắt bớt âm thầm, c = 44 (300 mod 256)
 
-* Một trong những lợi ích quan trọng nhất của khởi tạo đồng nhất là loại bỏ hoàn toàn chuyển đổi hẹp kiểu (narrowing conversion) tại thời điểm biên dịch:
+		// Cú pháp {} — an toàn, rõ ràng:
+		int x{3.99};        // LỖI BIÊN DỊCH: narrowing conversion từ double sang int
+		char c{300};        // LỖI BIÊN DỊCH: 300 không vừa trong 1 byte
 
-			// Cú pháp cũ - nguy hiểm
-			int x = 3.14;     // Hợp lệ, mất dữ liệu phần thập phân
-			char c = 1000;    // Hợp lệ, gây tràn (overflow)
+ * Giải quyết bằng Most Vexing Parse
 
-			// Cú pháp đồng nhất - an toàn
-			int x{3.14};      // LỖI biên dịch: narrowing conversion từ double sang int
-			char c{1000};     // LỖI biên dịch: giá trị ngoài phạm vi của char
+	* C++ có một hiện tượng nổi tiếng gọi là "Most Vexing Parse": cú pháp `()` đôi khi bị trình biên dịch diễn giải nhầm thành khai báo hàm thay vì khởi tạo đối tượng.
 
+			// Most Vexing Parse — trình biên dịch hiểu đây là khai báo hàm, không phải object!
+			std::vector<int> v();    // LỖI LOGIC: khai báo hàm trả về vector, không phải tạo vector rỗng
 
-#### **2.2. Tính hằng số (const) và tính toán tại thời gian biên dịch (constexpr, consteval)**			
+			// Giải pháp với {}:
+			std::vector<int> v{};   // Rõ ràng: tạo vector rỗng
 
-##### **2.2.1. Từ khóa const**
+#### **2.2. Tính hằng số và tính toán tại thời gian biên dịch** 
 
-* `const` thể hiện cam kết của lập trình viên rằng giá trị của biến sẽ không thay đổi sau khi được khởi tạo
+##### **2.2.1. Từ khóa `const`**
+ 
+* `const` đảm bảo biến mang tính "chỉ đọc" (read-only) trong quá trình thực thi — không thể bị gán lại sau khi khởi tạo.
 
-* Giá trị có thể được xác định tại thời điểm chạy:
+* Giá trị của biến `const` có thể được tính toán tại thời gian chạy (runtime).
 
-		const int userAge = getUserInput();  // Hợp lệ
-		// userAge = 20;                     // Lỗi biên dịch	
+		const int bufferSize = 1024;        // Giá trị biết trước lúc biên dịch
+		bufferSize = 2048;                  // LỖI BIÊN DỊCH: không thể gán lại const
 
-##### **2.2.2. constexpr**
+		// Const với giá trị runtime — hoàn toàn hợp lệ:
+		int userInput;
+		std::cin >> userInput;
+		const int threshold = userInput * 2; // Tính tại runtime, nhưng không đổi sau đó
 
-* `constexpr` yêu cầu trình biên dịch tính toán giá trị hoàn toàn tại thời điểm biên dịch nếu tất cả đầu vào đều là hằng số:
+##### **2.2.2. Từ khóa `constexpr`**
 
-		constexpr int square(int x) {
-		    return x * x;
+* `constexpr` yêu cầu trình biên dịch đánh giá (tính toán) giá trị ngay trong quá trình biên dịch.
+
+* Nếu thành công, giá trị được nhúng thẳng vào mã máy dưới dạng hằng số — không có bất kỳ chi phí thời gian chạy nào (zero-runtime cost).
+	
+		constexpr int MAX_NODES = 256;
+		constexpr double TAX_RATE = 0.08;
+
+		// Hàm constexpr — tính toán tại compile-time nếu đầu vào là hằng số
+		constexpr int square(int x) { return x * x; }
+
+		constexpr int area = square(10);   // Tính tại compile-time → mã máy chứa hằng 100
+		int runtime_val = 5;
+		int dynamic_area = square(runtime_val); // Tính tại runtime — vẫn hợp lệ
+
+##### **2.2.3. Từ khóa `consteval`**
+
+* `consteval` là phiên bản nghiêm ngặt hơn `constexpr`.
+
+* Hàm `consteval` **bắt buộc** phải được đánh giá tại thời gian biên dịch — nếu được gọi với đối số runtime, chương trình từ chối biên dịch ngay lập tức.
+	
+		consteval int computeCRC(int polynom) {
+		    return polynom * 0x1021; // Tính toán bảng CRC — phải xong lúc biên dịch
 		}
 
-		constexpr int result = square(5);  // Được tính tại compile-time → result = 25
+		constexpr int crc = computeCRC(0xFF);  // HỢP LỆ: đầu vào là hằng compile-time
 
-##### **2.2.3. consteval (C++20)**
-
-* `consteval` là phiên bản mạnh hơn của constexpr.
-
-* Hàm `consteval` bắt buộc phải được thực thi hoàn toàn tại thời điểm biên dịch.
-
-* Nếu không thể, trình biên dịch sẽ báo lỗi:
-
-		consteval int square(int x) {
-		    return x * x;
-		}
-
-		// int n = square(5);     // OK
-		// int a; cin >> a;
-		// int b = square(a);     // LỖI biên dịch: không thể tính tại compile-time
-
-
-#### **2.3. Các toán tử ép kiểu an toàn**			
-
-*  C++ thay thế kiểu ép kiểu C truyền thống bằng bốn toán tử ép kiểu có mục đích rõ ràng, dễ kiểm soát và dễ tìm kiếm trong mã nguồn.
-
-	* `static_cast(value)`
-
-		* Toán tử ép kiểu tĩnh, an toàn nhất.
-
-		* Thực hiện kiểm tra tại compile-time.
-
-		*  Dùng cho: chuyển đổi số học, upcast/downcast trong kế thừa không đa hình, chuyển đổi `void*`.
-
-				float f = 3.14f;
-				int i = static_cast<int>(f);        // Rõ ràng và an toàn
-
-	* `dynamic_cast(ptr)`
-
-		* Dùng cho ép kiểu đa hình (polymorphism) với RTTI.
-
-		* Thực hiện kiểm tra tại runtime.
-			
-		*  Nếu thất bại với con trỏ, trả về nullptr; với tham chiếu, ném ngoại lệ `std::bad_cast`.
-
-	* `const_cast(ptr)`
-
-		* Chỉ dùng để thêm hoặc loại bỏ thuộc tính `const/volatile`.
-
-		* Thường cần khi tương tác với thư viện C legacy.
-			
-		*  Sửa đổi giá trị của đối tượng `const `ban đầu thông qua `const_cast` dẫn đến `Undefined Behavior`.
-
-	* `reinterpret_cast(value)`
-
-		* Thay đổi cách diễn dịch bit pattern mà không thay đổi bit.
-
-		* Dùng trong lập trình hệ thống cấp thấp (địa chỉ phần cứng, network protocol, bit manipulation).
-					
-		*  Sử dụng sai rất dễ gây Segmentation Fault hoặc Undefined Behavior.
-
-### **III.  OPERATORS VÀ EXPRESSION EVALUATION**
-
-#### **3.1. Độ ưu tiên (Precedence) và trật tự kết hợp (Associativity)** 
-
-* **Độ ưu tiên (Precedence):**
-
-	* Độ ưu tiên quyết định toán tử nào được thực hiện trước.
-
-	* VD: 
-
-			a + b * c;   // Được hiểu là a + (b * c) vì * có độ ưu tiên cao hơn +
-
-* **Trật tự kết hợp (Associativity):**
-
-	* Khi nhiều toán tử có cùng độ ưu tiên, trật tự kết hợp quyết định hướng đánh giá:
-
-		* Trái sang phải (Left-to-Right): Áp dụng cho hầu hết các toán tử số học (`+, -, *, /, %…`).
-
-			a - b - c;   // Được hiểu là (a - b) - c
-
-		* Phải sang trái (Right-to-Left): Áp dụng cho các toán tử gán (`=, +=, …`) và một số toán tử tiền tố (`++, --, *, &…`).
-
-			a = b = c;   // Được hiểu là a = (b = c)
-						
-#### **3.2. Short-circuit Evaluation** 
-
-* **Nguyên lý hoạt động:**
-
-	* `&& (Logical AND)`:
-
-		* Đánh giá từ trái sang phải.
+		int userPoly = 0xFF;
+		int bad = computeCRC(userPoly);        // LỖI BIÊN DỊCH: đầu vào không phải hằng
 		
-		* Nếu toán hạng trái là `false`, toàn bộ biểu thức chắc chắn là `false` → bỏ qua toán hạng phải.  
+#### **2.3. auto**
 
-	* `|| (Logical OR)`:
+##### **2.3.1. Định nghĩa**
+			
+*  Từ khóa `auto` hướng dẫn trình biên dịch tự động suy luận (deduce) kiểu dữ liệu của biến dựa vào biểu thức khởi tạo ở vế phải.
 
-		* Nếu toán hạng trái là `true`, toàn bộ biểu thức chắc chắn là `true` → bỏ qua toán hạng phải.
+##### **2.3.2. Bản chất**
+			
+*  C++ là ngôn ngữ định kiểu tĩnh (Statically typed).
 
-* **Ứng dụng:**
+*  Từ khóa `auto` **không** biến C++ thành ngôn ngữ gán kiểu động như Python hay JavaScript.
+	
+* Kiểu của biến `auto` được chốt chặt tại thời điểm biên dịch và **không bao giờ thay đổi** sau đó.
 
-		if (ptr != nullptr && ptr->value == 10) {
-		    // ...
-		}
+		auto count   = 10;        // Compiler chốt: int
+		auto price   = 99.99;     // Compiler chốt: double
+		auto ratio   = 3.14f;     // Compiler chốt: float
+		auto name    = std::string{"Alice"};  // Compiler chốt: std::string
+		auto flag    = true;      // Compiler chốt: bool
 
-	* Nếu `ptr` là `nullptr`, biểu thức `ptr->value` sẽ không bao giờ được thực thi, tránh lỗi Undefined Behavior (dereference null pointer).
+		count = "Hello";          // LỖI BIÊN DỊCH: không thể gán string cho int
+
+##### **2.3.3. Trường hợp cần thiết**
+			
+*  `auto` không chỉ là tiện lợi — có những trường hợp kiểu dữ liệu quá dài hoặc thậm chí không thể viết tường minh:
+
+		// Kiểu iterator dài dòng — auto cứu trợ:
+		std::map<std::string, std::vector<int>>::iterator it = myMap.begin(); // Cũ
+		auto it = myMap.begin();   // Hiện đại, rõ ràng hơn
+
+		// Kiểu Lambda — không thể viết tường minh:
+		auto square = [](int x) { return x * x; };  // Kiểu thực sự là closure type ẩn danh
+
+		// Kiểu trả về phức tạp từ Template:
+		auto result = std::make_pair(42, std::string{"answer"});  // std::pair<int, std::string>
+
+*  `auto` với tham chiếu và con trỏ:
+
+		int value = 42;
+		auto  a = value;   // a là int — sao chép
+		auto& b = value;   // b là int& — tham chiếu đến value
+		auto* c = &value;  // c là int* — con trỏ đến value
+
+#### **2.4. Các toán tử ép kiểu an toàn**
+
+##### **2.4.1. Vấn đề**
+			
+*  Cú pháp ép kiểu C `(type)value` quá mạnh bạo, thực hiện ép kiểu mù quáng bất kể có an toàn hay không, bỏ qua mọi cơ chế bảo vệ của C++, và không cung cấp thông tin ngữ nghĩa về mục đích ép kiểu.
+
+		double pi = 3.14159;
+		int bad = (int)pi;   // Cú pháp C: hoạt động nhưng không rõ ngữ nghĩa
+
+		// Vấn đề nghiêm trọng hơn:
+		const int constVal = 42;
+		int* ptr = (int*)&constVal;  // C-cast xóa bỏ const — nguy hiểm, compiler không cảnh báo
+
+##### **2.4.2. static_cast**
+			
+*  `static_cast` 
+
+	* Là toán tử ép kiểu chuẩn mực nhất, thực hiện kiểm tra tính hợp lệ của chuyển đổi tại thời gian biên dịch.
+
+		double pi = 3.14159;
+		int intPi = static_cast<int>(pi);       // Rõ ràng: cắt phần thập phân, lập trình viên chủ động
+		float f = static_cast<float>(pi);       // double → float — hợp lệ, có thể mất độ chính xác
+
+		// Ép kiểu số nguyên:
+		uint32_t regValue = 0xDEADBEEF;
+		int32_t  signed_v = static_cast<int32_t>(regValue); // Tường minh về ý định
+
+		// static_cast KHÔNG thể xóa const:
+		const int c = 10;
+		int* p = static_cast<int*>(&c);  // LỖI BIÊN DỊCH — static_cast bảo vệ const
+
+*  `dynamic_cast`
+
+	* `dynamic_cast` dùng để chuyển đổi giữa các kiểu trong cây kế thừa (inheritance hierarchy).
+	
+	* Thực hiện kiểm tra kiểu tại thời gian chạy — trả về `nullptr` nếu chuyển đổi không hợp lệ 
+
+			class Base { virtual void func() {} }; // Cần ít nhất một virtual function
+			class Derived : public Base {};
+
+			Base* basePtr = new Derived();
+			Derived* derived = dynamic_cast<Derived*>(basePtr); // An toàn: kiểm tra runtime
+			if (derived != nullptr) {
+			    // Chuyển đổi thành công
+			}
+
+*  `reinterpret_cast`
+
+	* `reinterpret_cast` không thực hiện chuyển đổi giá trị — nó giữ nguyên chuỗi bit và diễn giải lại chúng theo kiểu mới.
+	
+	* Thường dùng  khi cần ánh xạ địa chỉ thanh ghi phần cứng.
+
+			// Truy cập thanh ghi phần cứng qua địa chỉ tuyệt đối:
+			uint32_t* GPIOA_ODR = reinterpret_cast<uint32_t*>(0x40020014);
+			*GPIOA_ODR = 0x0001; // Ghi trực tiếp vào thanh ghi
+
+			// Diễn giải lại cấu trúc byte:
+			float fval = 3.14f;
+			uint32_t bits = *reinterpret_cast<uint32_t*>(&fval); // Xem biểu diễn IEEE 754
+			
+### **III.  NHẬP XUẤT DỮ LIỆU**
+
+#### **3.1. std::cout**
+ 
+##### **3.1.1. Khái niệm**
+ 
+* `std::cout` là một đối tượng toàn cục kiểu `std::ostream`, được định nghĩa trong `<iostream>`.
+
+* Nó đại diện cho **luồng xuất chuẩn (standard output stream)**, được liên kết mặc định với thiết bị hiển thị console của hệ điều hành.
+
+		Chương trình C++          Luồng               Hệ điều hành
+		┌───────────────┐    ┌────────────┐    ┌─────────────────────┐
+		│ std::cout <<  │───▶│  Buffer    │───▶│  stdout (console)   │
+		│ "Hello"       │    │  (đệm)     │    │  hoặc file, pipe... │
+		└───────────────┘    └────────────┘    └─────────────────────┘
+
+##### **3.1.2. Toán tử chèn `<<` (Insertion Operator)** 
+
+* Toán tử `<<` được nạp chồng (overloaded) cho mọi kiểu dữ liệu cơ bản — không cần chỉ định định dạng như `%d`, `%f` trong C:
+ 
+		int age = 25;
+		double pi = 3.14159;
+		std::string name = "Lucas";
+		bool flag = true;
+
+		std::cout << "Name: " << name << "\n";   // Name: Lucas
+		std::cout << "Age: "  << age  << "\n";   // Age: 25
+		std::cout << "Pi: "   << pi   << "\n";   // Pi: 3.14159
+		std::cout << "Flag: " << std::boolalpha << flag << "\n"; // Flag: true
+		
+	* Chuỗi `<<` hoạt động được vì mỗi lời gọi `<<` trả về tham chiếu đến `std::cout` — cho phép nối tiếp vô hạn.
+
+
+
+##### **3.1.3. Buffering & Flushing** 
+
+* Để tối ưu hiệu suất, `std::cout` không ghi trực tiếp ra màn hình sau mỗi ký tự mà tích lũy vào **bộ đệm nội bộ (internal buffer)** trước.
+ 
+* Bộ đệm được xả (flush) ra thiết bị đầu ra khi:
+	
+	* Bộ đệm đầy.
+	
+	* Chương trình gọi tường minh `std::flush` hoặc `std::endl`.
+	
+	* Chương trình kết thúc bình thường.
+
+* So sánh hai cơ chế ngắt dòng:
+	
+		// Cách 1: Ký tự ngắt dòng \n — KHUYẾN NGHỊ cho vòng lặp lớn
+		std::cout << "Processing...\n";    // Chỉ thêm '\n' vào buffer, không flush
+
+		// Cách 2: std::endl — TRÁNH LẠM DỤNG trong vòng lặp
+		std::cout << "Processing..." << std::endl;  // Thêm '\n' VÀ flush buffer ngay lập tức
 
 * **Lưu ý:**
 
-	* Không nên đặt các hàm có hiệu ứng phụ (side effects) ở toán hạng phải nếu việc thực thi của chúng là bắt buộc:
+	* `std::endl` thực hiện một lần ghi hệ thống (system call) mỗi khi được gọi.
+	
+	*  Trong vòng lặp hàng triệu lần, lạm dụng `std::endl` có thể làm giảm hiệu suất I/O **hàng chục đến hàng trăm lần** so với dùng `'\n'`.
 
-			if (isError() || updateLogFile()) { ... }  // updateLogFile() có thể không được gọi
+* **Các bộ điều chỉnh định dạng:**
 
-#### **3.3. Bitwise Operations** 
+		#include <iomanip>
 
-* **Các toán tử bitwise cơ bản:**
+		double value = 3.14159265;
 
-	| Toán tử | Ý nghĩa | Ví dụ |  
-	|----------|----------|--------|  
-	| `&` | AND bit | `a & b` |  
-	| `\|` | OR bit | `a \| b` |  
-	| `^` | XOR bit | `a ^ b` |  
-	| `~` | NOT bit (bù 1) | `~a` |  
-	| `<<` | Dịch trái | `a << n` |  
-	| `>>` | Dịch phải | `a >> n` |
-
-* **Dịch bit (Bit Shifting):**
-
-	* `x << n` tương đương toán học với `x × 2ⁿ` (nhanh hơn phép nhân thông thường).
-
-	* `x >> n` tương đương với phép chia nguyên `x / 2ⁿ` (đối với số không dấu).
-
-* **Kỹ thuật Bit Masking:**
-
-	* Cho phép lưu trữ nhiều cờ trạng thái (flags) trong một biến nhỏ (thường là `uint8_t, uint32_t…`):
-
-			uint8_t flags = 0;
-
-			// Bật bit thứ n
-			flags |= (1u << n);
-
-			// Tắt bit thứ n
-			flags &= ~(1u << n);
-
-			// Đảo bit thứ n
-			flags ^= (1u << n);
-
-			// Kiểm tra bit thứ n
-			bool isSet = (flags & (1u << n)) != 0;
-
-	* **Lưu ý:**
-
-		*  Dịch bit với số lượng vị trí lớn hơn hoặc bằng kích thước của kiểu dữ liệu (1 << 32 với `uint32_t`) hoặc dịch số âm là Undefined Behavior.
+		std::cout << std::fixed << std::setprecision(2) << value;  // 3.14
+		std::cout << std::scientific << value;                      // 3.141593e+00
+		std::cout << std::setw(10) << std::right << 42;            // "        42"
+		std::cout << std::hex << 255;                               // ff
+		std::cout << std::oct << 255;                               // 377
+						
+#### **3.2. std::cin**	
 		
-		*  Nên sử dụng hậu tố `u/ul/ull` khi dịch bit để tránh vấn đề với số có dấu.  
-				    	 			
+##### **3.2.1. Khái niệm**	
+
+*  `std::cin` (viết tắt của "Character Input") là đối tượng toàn cục kiểu `std::istream`, đại diện cho **luồng nhập chuẩn (standard input stream)**, mặc định liên kết với bàn phím.
+
+		Người dùng gõ         Bộ đệm OS           Bộ đệm cin         Biến C++
+		┌─────────────┐    ┌───────────┐    ┌───────────────┐    ┌──────────┐
+		│ "25 Alice\n"│───▶│  stdin    │───▶│ std::cin buf  │───▶│ int, str │
+		└─────────────┘    └───────────┘    └───────────────┘    └──────────┘
+
+##### **3.2.2. Toán tử trích xuất `>>` (Extraction Operator)**	
+
+		int age;
+		double salary;
+		std::string lastName;
+
+		std::cin >> age >> salary >> lastName;
+		// Nếu người dùng nhập: "25 75000.5 Nguyen"
+		// Kết quả: age=25, salary=75000.5, lastName="Nguyen"
+
+
+##### **3.2.3. Đặc điểm phân tách token (Tokenization)**	
+
+*  `std::cin` với toán tử `>>` mặc định coi các ký tự khoảng trắng (Space, Tab, Enter `\n`) là ký tự **phân cách (delimiter)** giữa các token.
+
+* Hệ quả:
+
+	*  Toán tử `>>` tự động bỏ qua khoảng trắng dẫn đầu trước khi đọc.
+	
+	*  Toán tử `>>` dừng đọc khi gặp khoảng trắng đầu tiên.
+	
+	*  Do đó, `std::cin >> str` **không thể đọc chuỗi có chứa dấu cách**.   
+	
+			std::string fullName;
+			std::cin >> fullName;
+			// Người dùng nhập: "Nguyen Van An"
+			// fullName chỉ chứa: "Nguyen" — phần sau bị bỏ lại trong buffer!
+
+##### **3.2.4. std::getline() cho chuỗi chứa dấu cách**	
+
+		std::string fullName;
+		std::getline(std::cin, fullName);
+		// Người dùng nhập: "Nguyen Van An"
+		// fullName chứa: "Nguyen Van An" — đọc toàn bộ đến Enter
+
+##### **3.2.5. `>` và `getline`**	
+
+		int age;
+		std::string name;
+
+		std::cin >> age;           // Đọc số, nhưng '\n' (Enter) còn nằm trong buffer!
+		std::getline(std::cin, name); // Đọc ngay '\n' còn sót — name nhận chuỗi rỗng!
+
+* Giải pháp: Xả ký tự `\n` còn sót bằng `std::cin.ignore()`:
+
+		int age;
+		std::string name;
+
+		std::cin >> age;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Xả '\n' còn sót
+		std::getline(std::cin, name); // Hoạt động đúng
+
+##### **3.2.6. Kiểm tra trạng thái luồng (Stream State)**
+	
+*  Luồng `std::cin` có thể rơi vào trạng thái lỗi khi dữ liệu nhập không khớp với kiểu mong đợi:
+
+		int number;
+		std::cin >> number;
+
+		if (std::cin.fail()) {            // Kiểm tra có lỗi không
+		    std::cin.clear();             // Xóa cờ lỗi
+		    std::cin.ignore(1000, '\n'); // Bỏ qua dữ liệu sai trong buffer
+		    std::cerr << "Invalid input!\n";
+		}
+
+##### **3.2.7. Luồng lỗi chuẩn `std::cerr` và `std::clog`**
+	
+*  `std::cerr`: 
+
+	* Luồng xuất lỗi chuẩn (standard error). **Không có bộ đệm** — ghi ngay lập tức ra thiết bị. Dùng để thông báo lỗi nghiêm trọng.
+
+*  `std::clog`: 
+
+	* Luồng ghi nhật ký (logging). Có bộ đệm — hiệu suất cao hơn `cerr`. Dùng để ghi log.
+
+			std::cout << "Normal output\n";         // Luồng stdout — có buffer
+			std::cerr << "Critical error!\n";       // Luồng stderr — không buffer, ngay lập tức
+			std::clog << "Debug: value = " << x;    // Luồng stderr — có buffer
+																							
    </details> 
+
