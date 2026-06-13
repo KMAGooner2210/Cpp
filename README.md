@@ -1,83 +1,166 @@
+
 <details>
-    <summary><strong>BÀI 1: TỔNG QUAN VỀ NGÔN NGỮ LẬP TRÌNH VÀ QUY TRÌNH BIÊN DỊCH</strong></summary>
-## **BÀI 1: TỔNG QUAN VỀ NGÔN NGỮ LẬP TRÌNH**
-### **I.  CÁC CHUẨN C++ VÀ TƯ TƯỞNG THIẾT KẾ**
-#### **1.1. Quá trình phát triển** 
-*  Quá trình này có thể được chia thành hai giai đoạn chính: 
-	* **Classic C++:** 
+    <summary><strong>BÀI 1: CƠ SỞ NGÔN NGỮ VÀ CHU TRÌNH BIÊN DỊCH</strong></summary>
 	
-		*  **C++98:**
+## **BÀI 1: CƠ SỞ NGÔN NGỮ VÀ CHU TRÌNH BIÊN DỊCH**
+
+### **I.  CÁC CHUẨN C++ VÀ TRIẾT LÝ THIẾT KẾ**
+
+#### **1.1. Quá trình phát triển**
+
+##### **1.1.1. Classic C++:** 
+	
+*  **C++98:**
 		
-			* Là tiêu chuẩn ISO đầu tiên của ngôn ngữ, đánh dấu bước trưởng thành quan trọng.
+		* C++98 (ISO/IEC 14882:1998) là phiên bản chuẩn hóa đầu tiên, thiết lập các nền tảng cốt lõi:
 			
-			*  Đưa vào thư viện mẫu chuẩn (Standard Template Library – STL)
+			*  Lập trình hướng đối tượng: Classes, Inheritance, Polymorphism, Encapsulation.
 			
-			* Cung cấp các cấu trúc dữ liệu và thuật toán generic mạnh mẽ dựa trên cơ chế template. 
-		*  **C++03:**
+			* Lập trình tổng quát: Templates.
+				
+			* Thư viện khuôn mẫu chuẩn (STL): các container `vector`, `map`, `list` cùng các thuật toán đi kèm.
+				
+*  **C++03:**
 		
-			* Bản sửa chữa lỗi (bug-fix release) nhằm hoàn thiện C++98, không giới thiệu các tính năng ngôn ngữ lớn mới.
+		* Bản sửa chữa lỗi (bug-fix release) nhằm hoàn thiện C++98, không giới thiệu các tính năng ngôn ngữ lớn mới.
 				
-	* **Modern C++:**
-		*  **C++11:**
+##### **1.1.2.Modern C++:**
+	
+*  **C++11:**
 		
-			* Phiên bản này giới thiệu hàng loạt tính năng then chốt thay đổi cách viết code:
+	* Phiên bản này giới thiệu hàng loạt tính năng then chốt thay đổi cách viết code:
 			
-				* **move semantics**
+		* **Con trỏ thông minh (Smart Pointers):** 
 				
-				* **smart pointers**
+			* `std::unique_ptr`, `std::shared_ptr`, `std::weak_ptr`.
+					
+			*  Tự động hóa giải phóng bộ nhớ thông qua cơ chế RAII, loại bỏ phần lớn nguyên nhân gây rò rỉ bộ nhớ.
 				
-				* **lambda expressions**  
+		* **Suy luận kiểu tự động (Type Inference):**
 				
-				* **auto keyword** 
-			
-		*  **C++14 và C++17:**
+			* Từ khóa `auto` và `decltype` cho phép compiler tự suy luận kiểu dữ liệu, giảm cú pháp dài dòng.
+					
+		* **Ngữ nghĩa di chuyển (Move Semantics):**
+				
+			* Toán tử `&&` (rvalue reference) và `std::move` cho phép chuyển giao quyền sở hữu tài nguyên thay vì sao chép tốn kém.
+
+		* **Biểu thức Lambda**
+				
+			* Các hàm ẩn danh được định nghĩa trực tiếp tại vị trí sử dụng, cho phép viết mã ngắn gọn 
+					
+		* **Đa luồng:**
+				
+			* `std::thread`, `std::mutex`, `std::atomic`
+								
+*  **C++14 và C++17:**
 		
-			* Hoàn thiện nền tảng bằng bổ sung các tính năng quan trọng như:
+	* Hoàn thiện nền tảng bằng bổ sung các tính năng quan trọng như:
 			
-				* **structured bindings**
+		* `std::optional`, `std::variant`, `std::any` — xử lý giá trị tùy chọn và kiểu đa hình an toàn.
 				
-				* **std::optional**
+		* Structured bindings: `auto [key, value] = pair;`
 				
-				* **std::variant**  
-		*  **C++20:**
+		* `if constexpr` — rẽ nhánh tại thời điểm biên dịch.
+				
+		* Thư viện hệ thống tệp chuẩn hóa: `std::filesystem`. 
+				
+*  **C++20:**
 		
-			* Giai đoạn chuyển đổi với 4 thành phần chính
+	* Giới thiệu bốn tính năng lớn mang tính kiến trúc:
 			
-				* **Modules**
+		* **Concepts:** 
 				
-				* **Concepts**
+			* Ràng buộc kiểu cho Templates, biến lỗi Template từ thông báo dài hàng trăm dòng thành thông báo rõ ràng, có ý nghĩa.
 				
-				* **Coroutines**
+		* **Modules:** 
+		
+			* Thay thế cơ chế `#include` bằng cú pháp `import`
 				
-				* **Ranges**   
+		* **Coroutines:**
 				
-#### **1.2. Multi-paradigm Programming**			
+			* Nền tảng cho lập trình bất đồng bộ (async/await) tại mức ngôn ngữ.
+
+		* **Ranges**
+				
+			* Thư viện xử lý dãy dữ liệu theo phong cách hàm, có thể kết hợp pipeline.
+							
+#### **1.2. Multi-paradigm Programming**	
+
+##### **1.2.1. Định nghĩa**	
+	
 *  Khác với Java hay C# – những ngôn ngữ hướng đối tượng thuần túy, C++ theo triết lý “cung cấp công cụ, không áp đặt cách sử dụng”.
+
 * C++ là ngôn ngữ đa mô hình (multi-paradigm), cho phép lập trình viên linh hoạt kết hợp nhiều phong cách lập trình trong cùng một dự án:
 	
-	* **Lập trình thủ tục (Procedural Programming):**
+##### **1.2.2.Lập trình thủ tục (Procedural Programming):**
 	
-		*  Cho phép sử dụng các hàm không thuộc đối tượng cùng các thao tác bộ nhớ cấp thấp.
+*  Tổ chức mã thành các hàm tuần tự, tương tự ngôn ngữ C.
+
+*  Dữ liệu và hành vi tách biệt nhau.
+
+*   Phù hợp cho các tác vụ tuyến tính, kịch bản hệ thống cấp thấp.
+
+		int add(int a, int b) { 
+			return a + b; 
+		}
+		int result = add(3, 5);
 	
-	* **Lập trình hướng đối tượng (Object Oriented Programming):**
+##### **1.2.3.Lập trình hướng đối tượng (Object Oriented Programming)**
 	
-		*  Hỗ trợ đầy đủ đóng gói (encapsulation), kế thừa (inheritance) và đa hình (polymorphism) thông qua hàm ảo (virtual functions).
-	* **Lập trình tổng quát (Generic Programming):**
-	
-		*  Là một trong những điểm mạnh cốt lõi của C++.
+*  Đóng gói dữ liệu (data) và hành vi (behavior) vào các thực thể (Objects).
+
+*  Bốn trụ cột: Encapsulation, Inheritance, Polymorphism, Abstraction.
 		
-		*  Thông qua template, lập trình viên có thể viết thuật toán và cấu trúc dữ liệu độc lập với kiểu dữ liệu mà không mất chi phí hiệu năng.
+*  Phù hợp cho các hệ thống lớn, có mô hình hóa thực thể rõ ràng.
+
+			class Animal {
+			public:
+			    virtual void speak() = 0; // Giao diện trừu tượng
+			};
+
+			class Dog : public Animal {
+			public:
+			    void speak() override { /* Cài đặt cụ thể */ }
+			};
 				
-	* **Lập trình hàm (Functional Programming):**
+##### **1.2.4.Mô hình tổng quát (Generic Programming)**
 	
-		*  Được hỗ trợ mạnh mẽ nhờ biểu thức lambda, thư viện và các công cụ lập trình khai báo (declarative).
-#### **1.3. Nguyên lý Zero-overhead Abstraction**			
+*  Viết mã độc lập với kiểu dữ liệu cụ thể thông qua Templates.
+
+*  Compiler sinh ra mã máy chuyên biệt cho từng kiểu tại thời điểm biên dịch
+
+		template<typename T>
+		T maximum(T a, T b) { 
+			return (a > b) ? a : b; 
+		}
+
+		maximum(3, 5);       // Compiler sinh ra phiên bản int
+		maximum(3.14, 2.71); // Compiler sinh ra phiên bản double
+
+##### **1.2.5.Mô hình hàm (Functional Programming)**
+	
+*  Sử dụng hàm như một thực thể dữ liệu — có thể truyền vào hàm khác, lưu vào biến.
+
+*  Thực hiện qua `std::function`, Lambda expressions, và thư viện Ranges (C++20).
+
+		auto square = [](int x) { 
+			return x * x; 
+		};
+		std::vector<int> nums = {1, 2, 3, 4};
+		std::transform(nums.begin(), nums.end(), nums.begin(), square);
+
+
+
+#### **1.3. Nguyên lý Zero-overhead Abstraction**	
+		
 *  Hai quy tắc chính:
+
 	*  **“What you don’t use, you don’t pay for”**
 	
 		*  Nếu không sử dụng đa hình, trình biên dịch sẽ không sinh ra bảng hàm ảo (vtable)
 		
 		* Kích thước đối tượng sẽ bằng đúng tổng kích thước các thành viên dữ liệu, tương đương với một struct trong C.  
+		
 	*  **“What you do use, you couldn’t hand code any better"**
 	
 		*  Những gì bạn sử dụng, trình biên dịch sẽ tạo ra mã tối ưu đến mức không thể viết tay tốt hơn
@@ -87,170 +170,721 @@
 			* Ở mức trừu tượng, nó cung cấp cơ chế quản lý bộ nhớ an toàn tự động; 
 			
 			* Nhưng ở mức Assembly, trình biên dịch inline toàn bộ logic, khiến hiệu năng và kích thước bằng hoàn toàn với con trỏ thô (raw pointer), không phát sinh chi phí chạy thời gian (run-time overhead).
-### **II.  CƠ CHẾ DỊCH MÃ VÀ PHÂN TÍCH CÚ PHÁP**
-#### **2.1. Quá trình biên dịch** 
-##### **2.1.1.  Giai đoạn 1: Tiền xử lý (Preprocessing)** 
-* Trình tiền xử lý (Preprocessor) là bước đầu tiên và hoạt động ở mức văn bản thuần túy, không hiểu cú pháp C++. 
-* Nó xử lý các chỉ thị bắt đầu bằng dấu `#`.
-* Các công việc chính:
-	* Loại bỏ toàn bộ chú thích (`//` và `/* */)`.
+			
+### **II.  BỘ CÔNG CỤ HỖ TRỢ PHÁT TRIỂN**
+
+#### **2.1. Trình biên dịch (Compiler)** 
+
+##### **2.1.1. Định nghĩa**
+ 
+* Phần mềm dịch mã nguồn C++ (ngôn ngữ bậc cao, con người đọc được) sang mã đối tượng (Object code — mã máy nhị phân phụ thuộc kiến trúc vi xử lý).
+
+##### **2.1.2. Các trình biên dịch phổ biến**
+
+* GCC (GNU Compiler Collection)
 	
-	*  Thay thế các macro (`#define`).
+* Clang/LLVM
 	
-	* Xử lý chỉ thị `#include`: chèn toàn bộ nội dung của các tệp tiêu đề (header files) vào vị trí tương ứng.
+* MSVC (Microsoft Visual C++)
 	
-*  Kết quả:
-	*  Tạo ra một Translation Unit (Đơn vị dịch) – một tệp văn bản C++ khổng lồ, đã được mở rộng hoàn chỉnh, chứa toàn bộ mã nguồn cần thiết để biên dịch một tệp `.cpp`.
-##### **2.1.2.  Giai đoạn 2: Biên dịch (Compilation)** 
-* Trình biên dịch (Compiler) nhận Translation Unit và thực hiện phân tích cú pháp, ngữ nghĩa:
-	* Phân tích từ vựng (lexical analysis).
+##### **2.1.3. Quá trình biên dịch cơ bản**
+
+		# Biên dịch một tệp nguồn thành tệp thực thi
+		g++ -std=c++17 -O2 -Wall main.cpp -o my_program
+
+		# Trong đó:
+		# -std=c++17 : Sử dụng tiêu chuẩn C++17
+		# -O2        : Mức tối ưu hóa 2 (khuyến nghị cho production)
+		# -Wall      : Bật toàn bộ cảnh báo (warning)
+		# -o         : Chỉ định tên tệp thực thi đầu ra
+
+
+#### **2.2. Trình liên kết (Linker)** 
+
+##### **2.2.1. Định nghĩa**
+ 
+* Công cụ nối các tệp mã đối tượng riêng lẻ và các thư viện tĩnh/động lại với nhau để tạo thành một tệp thực thi duy nhất.
+
+##### **2.2.2. Đặc điểm**
+
+* Đầu vào của Linker: 
+
+	* Một hoặc nhiều tệp `.o` (object files) và các thư viện `.a` (static) hoặc `.so`/`.dll` (dynamic).  
 	
-	* Phân tích cú pháp và xây dựng cây cú pháp trừu tượng (Abstract Syntax Tree – AST).
-	* Kiểm tra kiểu dữ liệu (type checking) và các quy tắc ngữ nghĩa.
+* Đầu ra của Linker: 
+
+	* Tệp thực thi `.exe` (Windows) hoặc tệp ELF không có phần mở rộng (Linux/Unix).	
+
+* Trong thực tế, khi gọi lệnh `g++ main.cpp -o program`, GCC ngầm định thực hiện cả bước biên dịch lẫn liên kết.
+
+* Để tách riêng hai bước:
+
+		g++ -c main.cpp -o main.o      # Chỉ biên dịch → sinh ra object file
+		g++ main.o -o program           # Chỉ liên kết → sinh ra executable
+
+
+#### **2.3. Dynamic Library và Static Library**
+
+##### **2.3.1. Dynamic Library (.so/.dll)**
+			
+*  Mã thư viện nằm tách biệt, được tải vào bộ nhớ tại thời điểm chạy (runtime).
+
+*  Nhiều chương trình có thể dùng chung một thư viện động
 	
-	*  Thực hiện tối ưu hóa mã (code optimization).
+* Kích thước tệp nhỏ hơn nhưng phụ thuộc môi trường cài đặt.
 	
-*  Kết quả:
-	*  Mã nguồn C++ được dịch sang mã hợp ngữ (Assembly code), thường có đuôi `.s ` hoặc `.asm`, đặc thù cho từng kiến trúc CPU (x86-64, ARM…).
-##### **2.1.3.  Giai đoạn 3: Dịch Assembly (Assembly)** 
-* Trình dịch hợp ngữ (Assembler) chuyển đổi mã Assembly thành mã máy (machine code).
-*  Kết quả:
-	*  Tạo ra các tệp đối tượng (object files) với đuôi `.o` (Linux/macOS) hoặc `.obj` (Windows).
+##### **2.3.2. Static Library (.a/.lib)**
+			
+*  Mã thư viện được sao chép trực tiếp vào tệp thực thi tại thời điểm liên kết.
+
+*  Tệp thực thi có thể chạy độc lập mà không phụ thuộc vào runtime.
 	
-*  Tệp đối tượng chứa mã máy nhưng chưa thể thực thi độc lập vì vẫn còn các tham chiếu đến các hàm và biến nằm ở các tệp khác (unresolved symbols).
-#### **2.2. Bảng ký hiệu (Symbol Table) và cơ chế Name Mangling**			
-*  Mỗi tệp đối tượng đều chứa một Symbol Table (Bảng ký hiệu), liệt kê:
-	* Các hàm và biến toàn cục được định nghĩa trong tệp đó.
+* Kích thước tệp lớn hơn.
+
+
+### **III.  CẤU TRÚC TỆP MÃ NGUỒN C++**
+
+#### **3.1. Đặc tả thư viện chuẩn**
+ 
+##### **3.1.1. Khái niệm**
+ 
+* Mã nguồn C++ tận dụng lại các chức năng đã được tối ưu hóa từ Thư viện chuẩn C++ (C++ Standard Library)
+
+
+##### **3.1.2. Cú pháp `#include` (Legacy — Tiền xử lý)** 
+
+		#include <iostream>
+		#include <vector>
+		#include <string>
+
+
+* **Cơ chế hoạt động:**
+ 
+	* Tiền xử lý (Preprocessor) thay thế dòng `#include <iostream>` bằng cách sao chép toàn bộ nội dung văn bản của tệp header `iostream` vào vị trí đó trong mã nguồn.
 	
-	* Các hàm và biến được sử dụng nhưng chưa có định nghĩa (unresolved external symbols).
+	* Quá trình này diễn ra trước khi compiler thực sự phân tích mã.
+
+
+* **Nhược điểm:**
+ 
+	* Mỗi tệp nguồn `.cpp` đều phải biên dịch lại toàn bộ nội dung header, dù header đó không thay đổi.
 	
-*  C++ hỗ trợ nạp chồng hàm (function overloading), cho phép nhiều hàm cùng tên nhưng khác tham số.
-	* Tuy nhiên, ở mức mã máy, mọi hàm phải có tên duy nhất.
+	* Trong dự án lớn, cùng một header có thể được xử lý hàng nghìn lần, gây thời gian biên dịch kéo dài.
 	
-	* Do đó, trình biên dịch C++ áp dụng cơ chế Name Mangling (biến đổi tên):
+	* Header Guard (`#ifndef`, `#pragma once`) là biện pháp phòng tránh khai báo trùng lặp, nhưng vẫn không giải quyết triệt để vấn đề tốc độ.
 	
-		*  Tên hàm được mã hóa tự động, kết hợp thông tin về không gian tên (namespace), tên lớp, và kiểu dữ liệu của tham số.
+##### **3.1.3. Cú pháp `import` (C++20 Modules)** 
+
+		import <iostream>;
+		import <vector>;
+
+
+* **Cơ chế hoạt động:**
+ 
+	* Compiler tải thư viện dưới dạng nhị phân đã biên dịch sẵn (Binary Module Interface — BMI), thay vì xử lý lại văn bản từ đầu mỗi lần.
+	
+	* Tốc độ biên dịch tăng đáng kể (có thể gấp nhiều lần so với `#include`).
+	
+	* Loại bỏ hoàn toàn sự phụ thuộc vào thứ tự khai báo và Header Guard. 
+	
+	* Tách biệt giao diện (interface) và cài đặt (implementation) rõ ràng hơn.  
+						
+#### **3.2. Namespace**	
 		
-		*  Ví dụ: `void print(int x)` có thể được biến đổi thành `_Z5printi`, còn `void print(double x)` thành `_Z5printd`.
+##### **3.2.1. Vấn đề xung đột tên (Name collision)**	
+
+*  Trong dự án lớn, nhiều thư viện khác nhau có thể định nghĩa các hàm hoặc lớp có cùng tên.
+
+##### **3.2.2. Định nghĩa**	
+
+*  `namespace` là cơ chế nhóm các thực thể (biến, hàm, lớp, kiểu dữ liệu) vào một phạm vi tên cụ thể, tạo ra một "vùng đặt tên" riêng biệt.
+	
+		namespace Graphics {
+		    void init() { /* Khởi tạo hệ thống đồ họa */ }
+		    class Renderer { /* ... */ };
+		}
+
+		namespace Network {
+		    void init() { /* Khởi tạo kết nối mạng */ }
+		    class Socket { /* ... */ };
+		}
+
+
+
+##### **3.2.3. Toán tử phân giải tên (Scope Resolution Operator `::`)**	
+
+*  Để truy cập một thực thể trong namespace, sử dụng toán tử `::`:
+	
+			Graphics::init();   // Gọi hàm init của Graphics
+			Network::init();    // Gọi hàm init của Network — không xung đột
+
+			Graphics::Renderer renderer;
+			Network::Socket socket;
+
+##### **3.2.4. Namespace lồng nhau**	
+
+		namespace Company::Project::Module {
+		    void execute() { /* ... */ }
+		}
+
+		// Truy cập:
+		Company::Project::Module::execute();
+
+##### **3.2.5. Chỉ thị using**	
+
+		// Đưa toàn bộ std vào phạm vi hiện tại
+		using namespace std;     // Dùng được: cout thay vì std::cout
+
+		// Chỉ đưa một thực thể cụ thể vào phạm vi
+		using std::cout;         // Chỉ cout không cần prefix, các thứ khác vẫn cần std::
+
+* **Lưu ý:**
+
+	*  `using namespace std;` trong phạm vi toàn cục (đặc biệt trong tệp header) là **phản khuôn mẫu (anti-pattern)** nghiêm trọng.
+	
+	*  Nó phá vỡ toàn bộ mục đích bảo vệ của namespace, có thể gây xung đột tên âm thầm và khó phát hiện.
+	
+	*  Chỉ dùng `using` trong phạm vi hàm cụ thể, hoặc luôn viết đầy đủ `std::cout`, `std::vector`.
+					
+#### **3.3. Hàm main và mã trạng thái trả về**	
 		
-* Để gọi hàm từ thư viện C trong chương trình C++, lập trình viên sử dụng chỉ thị:
-		extern "C" {
-		    // Khai báo hàm C
+##### **3.2.1. Vai trò**
+	
+*  `main()` là điểm nhập (Entry point) của mọi chương trình C++ độc lập.
+
+* Hệ điều hành nạp chương trình vào bộ nhớ và chuyển quyền điều khiển đến hàm `main`.
+
+* Không có hàm nào khác trong C++ được gọi tự động trước `main` (ngoại trừ constructor của các đối tượng toàn cục)  
+	
+##### **3.2.2. Hai dạng khai báo chuẩn**
+	
+		// Dạng 1: Không nhận đối số
+		int main() {
+		    return 0;
+		}
+
+		// Dạng 2: Nhận đối số từ dòng lệnh
+		int main(int argc, char* argv[]) {
+		    // argc: số lượng đối số (argument count)
+		    // argv: mảng chuỗi chứa các đối số (argument values)
+		    // argv[0]: luôn là tên chương trình
+		    return 0;
 		}
 	
-#### **2.3. Giai đoạn liên kết (Linking) và quy tắc ODR (One Definition Rule)**			
-*  Giai đoạn Liên kết (Linking) là bước cuối cùng, trình liên kết (Linker) thực hiện:
-	* Gom tất cả các tệp đối tượng và thư viện (`.lib, .a, .dll, .so…`).
+##### **3.2.3. Exit Code**
+
+* Giá trị nguyên `int` trả về từ `main` được gửi trực tiếp cho hệ điều hành, gọi là Exit Code (mã thoát).
+
+		return 0;             // Thành công — tương đương EXIT_SUCCESS (định nghĩa trong <cstdlib>)
+		return 1;             // Lỗi tổng quát
+		return EXIT_FAILURE;  // Thất bại — giá trị cụ thể phụ thuộc nền tảng (thường là 1)
+
+* Tiêu chuẩn C++ quy định rằng nếu không có câu lệnh `return` tường minh trong `main`, compiler tự động chèn `return 0;` ở cuối.
+
+* Đây là trường hợp ngoại lệ duy nhất — các hàm khác có kiểu trả về khác `void` mà thiếu `return` là Undefined Behavior.
+
+### **IV.  CƠ CHẾ DỊCH MÃ VÀ PHÂN TÍCH CÚ PHÁP**
+
+#### **4.1. Tiền xử lý, biên dịch và sinh mã hợp ngữ**
+ 
+##### **4.1.1. Bước 1: Tiền xử lý (Preprocessing)**
+ 
+* Công cụ thực hiện: 
+
+	* Preprocessor (thường là một giai đoạn trong compiler, có thể gọi độc lập qua `g++ -E`).
 	
-	* Giải quyết các unresolved symbols bằng cách ghép địa chỉ thực sự của các hàm và biến.
+*  Xử lý toàn bộ các chỉ thị bắt đầu bằng dấu `#` — đây là các lệnh cho preprocessor, không phải cho compiler.
+
+		#include <vector>       // Sao chép nội dung tệp vector vào đây
+		#define MAX_SIZE 1024   // Thay thế toàn bộ MAX_SIZE bằng 1024 trong mã nguồn
+		#ifdef DEBUG            // Biên dịch có điều kiện — chỉ khai báo nếu DEBUG được định nghĩa
+		    #define LOG(x) std::cout << x
+		#else
+		    #define LOG(x)      // LOG không làm gì trong bản release
+		#endif
+
+*  Đầu ra của bước này: Một tệp văn bản thuần túy (Translation Unit) không còn chứa bất kỳ chỉ thị `#` nào.
+
+
+##### **4.1.2. Bước 2: Biên dịch (Compilation)**
+ 
+* **Phân tích từ vựng (Lexical Analysis):**
+
+	* Tách mã nguồn thành các token (từ khóa, định danh, toán tử, hằng số).
 	
-	* Tạo ra tệp thực thi cuối cùng (`.exe` trên Windows hoặc ELF trên Linux/macOS).
+*  **Phân tích cú pháp (Syntax Analysis / Parsing):**
+
+	* Xây dựng cây cú pháp trừu tượng (AST — Abstract Syntax Tree) từ các token, kiểm tra mã có tuân thủ ngữ pháp C++ không. 
+
+*  **Phân tích ngữ nghĩa (Semantic Analysis):**
+
+	* Kiểm tra kiểu dữ liệu, phân giải tên, xác minh tính hợp lệ logic (ví dụ: không thể cộng một `int` với một `struct` không có toán tử `+`).
 	
-*  Nếu trình liên kết không tìm thấy định nghĩa của một ký hiệu, sẽ báo lỗi Unresolved external symbol
-* Để quá trình liên kết thành công, chương trình C++ phải tuân thủ nghiêm ngặt quy tắc ODR
+* **Tối ưu hóa (Optimization):**
+
+	* Compiler áp dụng hàng loạt kỹ thuật biến đổi mã để tăng hiệu năng — loại bỏ mã chết (dead code elimination), nội tuyến hàm (function inlining), cuộn vòng lặp (loop unrolling).
+
+* **Sinh mã hợp ngữ (Code Generation):**
+
+	* Xuất ra mã hợp ngữ (Assembly) đặc thù cho kiến trúc đích (x86-64, ARM, RISC-V...).
 	
-	* **Khai báo (Declaration):**
+	*  Để quan sát mã Assembly được sinh ra:
+
+			g++ -S -O2 main.cpp -o main.s    # Sinh ra tệp Assembly .s
+
+##### **4.1.3. Bước 3: Assembly**
+ 
+* Trình Assembler chuyển mã hợp ngữ `.s` thành mã máy nhị phân (Binary Machine Code) — chuỗi các byte `0` và `1` mà CPU có thể thực thi trực tiếp.
+
+* Kết quả là tệp đối tượng `.o` (Object file).
+
+		g++ -c main.cpp -o main.o    # Dừng sau bước lắp ráp, sinh ra object file
 	
-		*  Có thể lặp lại nhiều lần
+*  Để quan sát nội dung nhị phân của object file:
+
+		objdump -d main.o    # Disassemble — hiển thị lại dạng Assembly từ mã máy
+								
+#### **4.2. Symbol Table và Name Mangling**	
 		
-		*  Chỉ thông báo sự tồn tại của thực thể (hàm, biến, lớp) mà không cấp phát bộ nhớ hay cung cấp thân hàm.
-		* VD: `extern int x;` hoặc `void foo();`
+##### **4.2.1. Symbol Table**	
+
+*  Cấu trúc dữ liệu nội bộ được compiler xây dựng và duy trì trong suốt quá trình biên dịch, lưu trữ thông tin về mọi định danh trong chương trình.
+
+*  Mỗi mục trong Symbol Table bao gồm: 
+
+	* Tên định danh
+	
+	* Kiểu dữ liệu
+	
+	* Địa chỉ bộ nhớ (hoặc offset)
+	
+	* Phạm vi (scope)
+	
+	* Trạng thái (đã định nghĩa hay chỉ khai báo).
+
+*  Để xem Symbol Table của object file: 
+
+		nm main.o           # Liệt kê các symbol trong object file
+		nm --demangle main.o  # Hiển thị tên đã được giải mã (demangled)
+	
+##### **4.2.2. Name Mangling**	
+
+*  C++ cho phép nạp chồng hàm (Function Overloading) — nhiều hàm có cùng tên nhưng khác danh sách tham số.
+
+*  Tuy nhiên, ở cấp độ mã máy, mỗi hàm phải có một địa chỉ duy nhất và một tên định danh duy nhất trong Symbol Table.
+
+*  Compiler "băm" (mangle) tên hàm ban đầu bằng cách nối thêm thông tin về kiểu tham số vào tên hàm, tạo ra một tên nhị phân duy nhất.
+
+		// Mã nguồn C++:
+		void print(int x)    { /* ... */ }
+		void print(double x) { /* ... */ }
+		void print(int x, int y) { /* ... */ }
+
+		// Tên trong Symbol Table (GCC/Clang ABI):
+		// void print(int)       → _Z5printi
+		// void print(double)    → _Z5printd
+		// void print(int, int)  → _Z5printii
+
+#### **4.3. Qúa trình liên kết và quy tắc ODR**	
 		
-	* **Định nghĩa (Definition):**
+##### **4.3.1. Quá trình liên kết (Linking)**	
+
+*  Sau khi tất cả các tệp `.cpp` được biên dịch thành các tệp `.o` tương ứng, Linker thực hiện bước cuối cùng:
+
+	*  Duyệt qua Symbol Table của từng object file.
 	
-		*  Phải chỉ xuất hiện đúng một lần trên toàn bộ chương trình.
+	*  Với mỗi tham chiếu chưa được giải quyết (undefined reference), tìm kiếm định nghĩa tương ứng trong các object file khác hoặc trong thư viện.
+	
+	*  Khớp địa chỉ (Address Resolution): gán địa chỉ bộ nhớ thực tế cho từng hàm và biến.
+	
+	*  Tạo tệp thực thi hoàn chỉnh.  
+
+*  Lỗi Linker thường gặp và nguyên nhân:
+
+		undefined reference to `MyClass::init()'
+	
+	*  Nguyên nhân: Hàm `init()` được khai báo trong header nhưng chưa có định nghĩa (implementation) trong bất kỳ tệp `.cpp` nào được đưa vào quá trình liên kết.
+
+			multiple definition of `globalVar'
+
+	*  Nguyên nhân: Biến `globalVar` được định nghĩa (không chỉ khai báo) trong nhiều tệp `.cpp`.
+
+##### **4.3.1. Quy tắc ODR**	
+
+*  ODR là một trong những quy tắc cơ bản nhất của C++, phát biểu như sau:
+
+	*  Một biến, hàm, hoặc lớp có thể được **khai báo (declared)** vô số lần trong chương trình.
+	
+	*  Tuy nhiên, nó chỉ được **định nghĩa (defined)** duy nhất **MỘT LẦN** trên toàn bộ chương trình.
+	
+* Phân biệt khai báo và định nghĩa:
+
+		// Khai báo (Declaration) — thông báo sự tồn tại, không cấp phát bộ nhớ:
+		extern int globalVar;        // Khai báo biến — không cấp phát
+		void calculate(int x);       // Khai báo hàm (function prototype)
+		class Engine;                // Khai báo tiền phương (forward declaration)
+
+		// Định nghĩa (Definition) — cấp phát bộ nhớ hoặc cài đặt logic:
+		int globalVar = 42;          // Định nghĩa biến — cấp phát 4 byte
+		void calculate(int x) {      // Định nghĩa hàm — cài đặt cụ thể
+		    /* implementation */
+		}
+		class Engine {               // Định nghĩa lớp — khai báo đầy đủ thành viên
+		    int cylinders;
+		};				    	 		
+
+* Quy tắc thực hành để tuân thủ ODR:
+
+	* Chỉ đặt khai báo trong tệp header (`.h`/`.hpp`).
+	
+	* Chỉ đặt định nghĩa trong tệp nguồn (`.cpp`).
+	
+	* Sử dụng Header Guard hoặc `#pragma once` để ngăn header bị `#include` nhiều lần trong cùng một translation unit. 
+
+
+			// engine.h
+			#pragma once                  // Ngăn include lặp — thay thế hiện đại cho ifndef guard
+
+			class Engine {
+			public:
+			    void start();             // Khai báo — không có thân hàm
+			    int getCylinders() const;
+			private:
+			    int cylinders_ = 4;
+			};
+
+			// engine.cpp
+			#include "engine.h"
+			void Engine::start() { /* ... */ }        // Định nghĩa — chỉ ở đây
+			int Engine::getCylinders() const { return cylinders_; }
+
+### **V.  MÔ HÌNH CẤP PHÁT BỘ NHỚ HỆ THỐNG**
+
+#### **5.1. Phân mảnh không gian nhớ**
+ 
+##### **5.1.1. Text / Code Segment**
+ 
+* Phần thấp nhất của không gian địa chỉ.
+
+* Các lệnh mã máy đã biên dịch — chính là nội dung của tệp `.o` sau khi được Linker ánh xạ vào bộ nhớ.
+	
+* Phân đoạn này có thuộc tính **chỉ đọc (Read-only)** và **thực thi được (Executable)**, do hệ điều hành thiết lập thông qua cơ chế bảo vệ bộ nhớ (Memory Protection).
+
+*  Mục đích:
+
+	*  Ngăn chương trình vô tình ghi đè lên mã lệnh của chính nó.
+	
+	*  Bảo vệ trước một số loại tấn công bảo mật
+	
+	*  Cho phép nhiều tiến trình chạy cùng một chương trình chia sẻ một bản sao duy nhất của Text segment trong RAM (shared pages).  
+
+
+##### **5.1.2. Data Segment và BSS Segment**
+ 
+* Lưu trữ các biến có vòng đời tĩnh (Static Storage Duration) — tồn tại trong suốt vòng đời của chương trình.
+	
+*  **Data Segment (Initialized Data):**
+
+	* Chứa các biến toàn cục (global) và biến tĩnh (static) đã được khởi tạo tường minh với giá trị khác 0.
+
+			int globalCounter = 100;          // → Data segment
+			static double PI = 3.14159;       // → Data segment
+	
+* **BSS Segment (Block Started by Symbol — Uninitialized Data)::**
+
+	* Chứa các biến toàn cục/tĩnh chưa được khởi tạo hoặc được khởi tạo bằng 0.
+
+			int uninitGlobal;                 // → BSS segment (mặc định = 0)
+			static char buffer[4096];         // → BSS segment (4096 byte, tất cả = 0)	
+
+	* Vì BSS chỉ chứa các byte bằng 0, tệp thực thi chỉ cần lưu kích thước của BSS, không cần lưu toàn bộ nội dung.
+	
+	* Khi nạp vào RAM, hệ điều hành tự cấp phát và điền 0. Điều này làm giảm kích thước tệp thực thi đáng kể.  
+
+* **Stack Segment:**
+
+	* Stack hoạt động theo nguyên tắc LIFO (Last In, First Out — Vào sau Ra trước).
+	
+	* CPU duy trì một thanh ghi đặc biệt gọi là Stack Pointer (SP) trỏ đến đỉnh hiện tại của Stack. 
+	
+	* Việc cấp phát và thu hồi bộ nhớ Stack được thực hiện bởi CPU thông qua các lệnh `PUSH` và `POP` (hoặc tương đương), không cần can thiệp của lập trình viên. 
+
+	* **Ưu điểm:**
+	
+		*  Tốc độ cấp phát/thu hồi cực nhanh (chỉ là phép tính số học trên SP).
 		
-		*  Đây là nơi cấp phát bộ nhớ (với biến) hoặc cung cấp thân hàm.
-		* VD: `int x = 5;` hoặc `void foo() { ... }`
-*  Ngoại lệ của ODR:
-	* Các hàm được khai báo `inline`.
+		*   Dữ liệu nằm liên tiếp trong bộ nhớ → tối ưu cho CPU cache.
+
+	* **Hạn chế:**
 	
-	* Các hàm mẫu (template functions) và lớp mẫu (template classes).
-	
-	* Các biến `constexpr` (trong một số trường hợp). 
-### **III.  MEMORY LAYOUT**
-#### **3.1. Cấu trúc không gian nhớ của tiến trình** 
-##### **3.1.1. Text Segment (Phân đoạn mã)** 
-* Chứa mã máy (machine code) đã được biên dịch.
-* Phân đoạn này thường được ánh xạ với thuộc tính chỉ đọc (Read-Only) để ngăn chặn việc tự ghi đè lên chính mã thực thi, giúp tăng tính bảo mật và ổn định. 
-##### **3.1.2. Data Segment và BSS Segment (Phân đoạn dữ liệu toàn cục)** 
-* **Data Segment (Initialized Data):** 
-	* Lưu trữ các biến toàn cục và biến tĩnh đã được khởi tạo với giá trị cụ thể (ví dụ: `int x = 100;`).
-* **BSS Segment (Block Started by Symbol):** 
-	* Chứa các biến toàn cục và biến tĩnh chưa được khởi tạo hoặc được khởi tạo bằng zero (ví dụ: `int y;`)
-	* Hệ điều hành tối ưu hóa bằng cách chỉ ghi nhận kích thước vùng nhớ cần thiết trong tệp thực thi, thay vì lưu trữ các giá trị zero, giúp giảm dung lượng file.
-* **Stack (Ngăn xếp):** 
-	* Hoạt động theo nguyên tắc LIFO (Last-In-First-Out).
-	* Được quản lý tự động bởi CPU thông qua thanh ghi Stack Pointer, nên tốc độ truy cập cực kỳ nhanh.
-	
-	* Dùng để lưu trữ: biến cục bộ, tham số hàm, và địa chỉ trả về.
-	
-	* Mỗi lần gọi hàm, một stack frame mới được tạo; khi hàm kết thúc, stack frame tự động được giải phóng.
-	
-	* Hạn chế: 
-	
-		* Kích thước stack thường bị giới hạn (thường từ 1MB đến 8MB tùy hệ điều hành).
+		*  Dung lượng Stack cố định và rất nhỏ
 		
-		*  Việc sử dụng mảng lớn hoặc đệ quy sâu có thể dẫn đến Stack Overflow.    
-* **Heap (Vùng nhớ động):** 
-	* Vùng nhớ có kích thước lớn và linh hoạt, được quản lý bởi hệ điều hành.
-	* Dùng cho các dữ liệu có kích thước chỉ biết tại thời điểm chạy (runtime), chẳng hạn như mảng động, cấu trúc dữ liệu lớn, hoặc dữ liệu nhận từ người dùng/mạng.
+		*   Vượt quá giới hạn này (thường do đệ quy vô hạn hoặc mảng cục bộ quá lớn) sẽ gây lỗi Stack Overflow
+
+				void dangerous() {
+				    int hugeArray[10000000]; // ~40MB trên stack → Stack Overflow ngay lập tức
+				    dangerous();             // Đệ quy vô hạn → Stack Overflow sau vài nghìn lần
+				}
+
+* **Heap Segment:**
+
+	* Vùng nhớ tự do, dung lượng khổng lồ (có thể lên đến hàng GB, giới hạn bởi RAM vật lý và bộ nhớ ảo của hệ điều hành).
 	
-	* Lập trình viên chịu trách nhiệm cấp phát (`new, malloc`) và giải phóng (`delete, free`).
+	* Lập trình viên yêu cầu bộ nhớ tại thời điểm chạy (Runtime) thông qua toán tử `new` (C++) hoặc `malloc` (C).
 	
-	* Việc quên giải phóng dẫn đến rò rỉ bộ nhớ (Memory Leak).  
-						
-#### **3.2. Storage Duration và Scope**			
-##### **3.2.1. Scope**	
-*  Xác định vùng mã nguồn mà tên (identifier) của biến/hàm có thể được truy cập (compile-time concept).
-* Các loại scope chính trong C++:
-	* **Block scope:** Giới hạn trong cặp ngoặc nhọn {} (thân hàm, khối lệnh, vòng lặp…).
+	* Hệ điều hành/runtime tìm vùng nhớ trống phù hợp và trả về con trỏ.
+
+			// Cấp phát trên Heap
+			int* dynamicArray = new int[10000];  // 40,000 byte trên Heap — hoàn toàn hợp lệ
+			MyObject* obj = new MyObject();
+
+			// Lập trình viên PHẢI tự thu hồi
+			delete[] dynamicArray;               // Thu hồi mảng
+			delete obj;                          // Thu hồi đối tượng đơn
+
+	* **Ưu điểm:**
 	
-	* **Global / Namespace scope:** Khai báo ngoài mọi hàm và lớp.
-	* **Class scope:** Bên trong định nghĩa lớp (class hoặc struct).
-##### **3.2.2. Storage Duration**	
-*  Xác định thời điểm vùng nhớ được cấp phát và giải phóng (runtime concept), C++ hỗ trợ bốn loại:
-	* **Automatic storage duration:**
+		*  Có thể cấp phát kích thước tùy ý tại thời điểm chạy, kích thước không cần biết trước lúc biên dịch.
+
+	* **Hạn chế:**
 	
-		*  Áp dụng cho biến cục bộ thông thường.
+		*  Tốc độ cấp phát chậm hơn Stack (hệ điều hành phải tìm kiếm vùng trống, cập nhật cấu trúc quản lý heap).
 		
-		*  Vùng nhớ nằm trên Stack, được cấp phát khi luồng thực thi vào block scope và tự động hủy khi thoát khỏi scope đó.
-	* **Static storage duration:**
-	
-		*  Vùng nhớ nằm trên Data/BSS segment.
+		*   Lập trình viên hoàn toàn chịu trách nhiệm thu hồi bộ nhớ.
+
+		*  Quên gọi `delete` → **Rò rỉ bộ nhớ (Memory Leak)**: bộ nhớ bị chiếm dụng vĩnh viễn cho đến khi chương trình kết thúc.
 		
-		*  Biến được khởi tạo khi chương trình bắt đầu và tồn tại suốt vòng đời chương trình.
-		
-		*  Từ khóa `static` có thể áp dụng cho biến cục bộ để thay đổi storage duration mà không thay đổi scope.
+		*   Gọi `delete` hai lần (double-free) → Undefined Behavior
+
+#### **5.2. Vòng đời lưu trữ và phạm vi**
+ 
+##### **5.2.1. Phạm vi**
+ 
+* Phạm vi mã nguồn mà trong đó một tên định danh có thể được trình biên dịch "nhìn thấy" và truy cập.
+
+* Phạm vi là khái niệm thuộc không gian (thời điểm biên dịch).
 	
-	* **Dynamic storage duration:** 
+* Các loại phạm vi trong C++:
+
+	*  **Block Scope:**
 	
-		* Vùng nhớ nằm trên Heap.
-		* Vòng đời hoàn toàn do lập trình viên kiểm soát thông qua `new/delete` (hoặc `malloc/free`).
-	* **Thread-local storage duration:** 
+		* Biến được khai báo bên trong một khối lệnh `{ }` chỉ tồn tại trong khối đó.
+
+				#include <iostream> 
+				using namespace std; 
+				int main() { 
+					{ 
+						int a = 5; // block scope 
+						cout << a << endl; 
+					} 
+					// cout << a; // Lỗi: a không còn tồn tại 
+					return 0; 
+				}
+
+	*  **Function Scope:**
 	
-		* Mỗi luồng (thread) có một bản sao riêng biệt của biến, tương tự static storage nhưng an toàn trong môi trường đa luồng.
-#### **3.3. Undefined Behavior (UB) và Implementation-defined Behavior**			
-##### **3.2.1. Implementation-defined Behavior**	
-*  Những hành vi mà tiêu chuẩn không quy định cụ thể mà giao cho từng trình biên dịch quyết định, miễn là được ghi chép rõ ràng.
-* VD:
-	* Kích thước của các kiểu dữ liệu cơ bản (sizeof(int), sizeof(long)…) có thể khác nhau giữa các nền tảng (32-bit và 64-bit).
+		* Chỉ áp dụng cho nhãn (`label`) dùng với lệnh `goto`.
+
+				#include <iostream> using namespace std; 
+				void test() { 
+				start: // nhãn có function scope 						
+					cout << "Hello\n"; 
+					goto end; 
+					cout << "Dong nay khong duoc thuc hien\n"; 
+				end: 
+					cout << "Ket thuc\n"; 
+				} 
+				int main() { 
+				test(); 
+				}
+
+	*  **Namespace Scope:**
 	
-##### **3.2.2. Undefined Behavior (UB) – Hành vi không xác định**	
-*  Khi chương trình chứa UB, tiêu chuẩn C++ không đảm bảo bất kỳ hành vi nào: chương trình có thể crash, chạy sai, hoặc hoạt động bình thường trong môi trường test nhưng thất bại trong môi trường thực tế.
-*  Một số UB phổ biến cần tránh tuyệt đối:
-	*  Truy cập mảng ngoài giới hạn (array out-of-bounds).
+		* Các biến, hàm, lớp được khai báo trực tiếp bên trong một namespace có namespace scope.
+
+				#include <iostream> using namespace std;
+				 namespace Math { 
+					 int x = 10; // namespace scope 
+					 void show() { // namespace scope 
+						 cout << x << endl; 
+					 } 
+				 } 
+				 int main() { 
+					 Math::show(); 
+			     }
+
+	*  **Class Scope:**
 	
-	*   Giải tham chiếu con trỏ null hoặc con trỏ lơ lửng (dangling pointer).
+		* Các thành viên của lớp có class scope.
+
+				#include <iostream> 
+				using namespace std; 
+				class Student { 
+					public: 
+						string name; // class scope 
+						int age; // class scope 
+					void display() { // class scope 
+						cout << name << " - " << age << endl; 
+						} 
+					}; 
+				int main() { 
+					Student s; 
+					s.name = "An"; 
+					s.age = 20; 
+					s.display(); 
+				}
+
+
+	*  **Global Scope:**
 	
-	*    Sử dụng biến cục bộ chưa được khởi tạo.
+		* Các biến hoặc hàm được khai báo bên ngoài mọi hàm, lớp và namespace có global scope.
+
+				#include <iostream> 
+				using namespace std; 
+				int x = 100; // global scope 
+				void show() { // global scope 
+					cout << x << endl; 
+				} 
+				int main() { 
+					show(); 
+				}
+
+##### **5.2.2. Vòng đời lưu trữ**
+ 
+* Vòng đời lưu trữ là khái niệm thuộc thời gian — xác định khi nào bộ nhớ được cấp phát và khi nào được thu hồi.
+
+* **Automatic Storage Duration (Tự động):**
+
+	* Áp dụng cho biến cục bộ trong khối lệnh.
 	
-	*    Tràn số nguyên có dấu (signed integer overflow).
+	*  Bộ nhớ được cấp phát trên Stack khi luồng thực thi đi vào khối `{`.
 	
-	*    Vi phạm quy tắc ODR.
+	*   Bộ nhớ được thu hồi hoàn toàn (và destructor được gọi nếu là object) khi luồng thực thi thoát khỏi khối `}`.
+
+			void func() {
+			    int x = 5;              // Cấp phát khi vào func()
+			    std::string s = "hello"; // Constructor được gọi
+			}                            // Destructor của s được gọi, x bị thu hồi
 	
-	*   Truy cập đối tượng sau khi đã bị hủy (use-after-free).  
-		    	 			
+* **Static Storage Duration (Tĩnh):**
+
+	*  Áp dụng cho: biến toàn cục, biến khai báo với `static`.
+	
+	*  Bộ nhớ được cấp phát khi chương trình khởi động (trước khi `main` chạy).
+	
+	* Bộ nhớ tồn tại đến khi chương trình kết thúc hoàn toàn. 
+
+int globalCounter = 0;          // Static duration — tồn tại suốt chương trình
+
+		void countCalls() {
+		    static int callCount = 0;   // Static duration — khởi tạo chỉ MỘT LẦN
+		    ++callCount;                // Giá trị được giữ lại giữa các lần gọi hàm
+		}
+
+* **Dynamic Storage Duration (Động):**
+
+	*  Áp dụng cho bộ nhớ cấp phát trên Heap qua `new`/`malloc`.
+	
+	*  Bộ nhớ được cấp phát khi lập trình viên gọi `new`.
+	
+	* Bộ nhớ tồn tại cho đến khi lập trình viên gọi `delete` (hoặc chương trình kết thúc — trường hợp rò rỉ bộ nhớ).
+
+			int* p = new int(42);   // Cấp phát — dynamic duration bắt đầu
+			// ... sử dụng p ...
+			delete p;               // Thu hồi — dynamic duration kết thúc
+			p = nullptr;            // Thực hành tốt: tránh dangling pointer
+
+
+* **Thread Storage Duration (C++11 — Luồng):**
+
+	*  Khai báo với `thread_local`.
+	
+	*  Mỗi luồng (thread) có bản sao riêng của biến.
+	
+	* Vòng đời gắn với vòng đời của luồng tương ứng.
+
+			thread_local int threadID = 0;  // Mỗi thread có threadID riêng
+
+#### **5.3. Undefined Behavior**
+ 
+##### **5.2.1. Định nghĩa**
+ 
+* Undefined Behavior là tình huống mà chương trình thực hiện một thao tác mà Tiêu chuẩn C++ (ISO/IEC 14882) **không quy định kết quả**.
+
+* Khi UB xảy ra, Tiêu chuẩn C++ không đưa ra bất kỳ yêu cầu nào về kết quả hay cách thức thực thi.
+	
+* Vì vậy, chương trình có thể biểu hiện theo nhiều cách khác nhau, bao gồm việc cho ra kết quả có vẻ đúng, cho ra kết quả sai, hoạt động không ổn định hoặc thậm chí bị dừng đột ngột.
+
+##### **5.2.2. Các dạng UB phổ biến**
+ 
+* **Chia cho 0:**
+
+		int x = 10;
+		int y = 0;
+		int z = x / y;    // UB — kết quả không xác định (không phải luôn crash)
+	
+* **Giải tham chiếu con trỏ null (Null pointer dereference):**
+
+		int* p = nullptr;
+		*p = 42;          // UB — thường gây Segmentation Fault, nhưng không đảm bảo
+
+* **Truy cập mảng ngoài giới hạn:**
+
+		int arr[5] = {1, 2, 3, 4, 5};
+		arr[5] = 10;      // UB — chỉ có chỉ số 0..4 hợp lệ
+		arr[-1] = 20;     // UB
+
+* **Sử dụng biến chưa khởi tạo:**
+
+		int x;            // Biến cục bộ — không tự động = 0
+		int y = x + 1;    // UB — x chứa giá trị rác từ Stack
+
+* **Tràn số nguyên có dấu:**
+
+		int max = INT_MAX;     // Giá trị lớn nhất của int (thường 2,147,483,647)
+		int overflow = max + 1; // UB — không đảm bảo wrap around
+
+* **Sử dụng bộ nhớ sau khi giải phóng:**
+
+		int* p = new int(42);
+		delete p;
+		*p = 100;         // UB — p là "dangling pointer", vùng nhớ có thể đã được tái sử dụng
+
+* **Đọc/ghi đồng thời không đồng bộ:**
+
+		// Thread 1:          Thread 2:
+		counter++;            counter++;  // UB nếu không có đồng bộ hóa (mutex/atomic)
+
+##### **5.2.3.Phụ thuộc nền tảng**
+ 
+* Tiêu chuẩn C++ phân loại hành vi không hoàn toàn xác định thành ba mức:
+
+	* **Undefined Behavior (UB):**
+	
+		* Tiêu chuẩn không quy định gì — mọi kết quả đều có thể xảy ra. 
+
+	* **Unspecified Behavior:**
+	
+		* Tiêu chuẩn cho phép nhiều kết quả khác nhau, compiler chọn một nhưng không cần tài liệu hóa.
+	
+	* **Implementation-defined Behavior:**
+
+		* Compiler chọn kết quả và phải tài liệu hóa lựa chọn đó.
+
+				sizeof(int)    // 4 byte trên x86-64, nhưng có thể 2 byte trên một số MCU nhúng
+				sizeof(long)   // 4 byte trên Windows x64, 8 byte trên Linux x64
+
+##### **5.2.4. Công cụ phát hiện UB**
+ 
+		# AddressSanitizer — phát hiện out-of-bounds, use-after-free
+		g++ -fsanitize=address -g main.cpp -o main
+
+		# UndefinedBehaviorSanitizer — phát hiện signed overflow, null deref...
+		g++ -fsanitize=undefined -g main.cpp -o main
+
+		# Valgrind — phân tích bộ nhớ toàn diện (chậm hơn, không cần biên dịch lại)
+		valgrind --leak-check=full ./main
+																							
    </details> 
 
 
