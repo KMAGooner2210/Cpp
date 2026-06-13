@@ -2154,3 +2154,744 @@ int globalCounter = 0;          // Static duration — tồn tại suốt chươ
 																										
    </details> 
 
+
+<details>
+    <summary><strong>BÀI 4: BỘ NHỚ TUYẾN TÍNH VÀ CON TRỎ</strong></summary>
+	
+## **BÀI 4: BỘ NHỚ TUYẾN TÍNH VÀ CON TRỎ**
+
+### **I.  KHỐI NHỚ TĨNH VÀ PHÂN MẢNH**
+
+#### **1.1. Mảng nguyên ngủy**
+
+##### **1.1.1. Định nghĩa** 
+	
+*  Mảng tĩnh (C-style Array) là cấu trúc dữ liệu nguyên thủy nhất trong C/C++, đại diện cho một tập hợp tuần tự các phần tử có **cùng một kiểu dữ liệu**.
+
+* Về mặt vật lý, mảng tĩnh yêu cầu hệ điều hành cấp phát một khối nhớ **liên tục tuyệt đối, không phân mảnh**, thường nằm trên phân vùng Ngăn xếp (Stack) của chương trình.
+
+* Kích thước phải là một hằng số được xác định tường minh tại **thời gian biên dịch (Compile-time)**.
+
+* Trình biên dịch cần biết chính xác mảng chiếm bao nhiêu byte để dịch chuyển con trỏ Stack 
+
+##### **1.1.2. Cú pháp khai báo và khởi tạo** 
+
+* Khi khai báo mảng, C++ cung cấp nhiều quy tắc khởi tạo với các tác động bộ nhớ khác nhau:
+
+	*  **Không khởi tạo:**
+	
+		* Bộ nhớ chỉ được cấp phát nhưng không xóa dữ liệu cũ
+		
+		* Các phần tử chứa giá trị rác 
+		
+	*  **Khởi tạo toàn phần/bán phần:**
+	
+		* Khi cung cấp danh sách khởi tạo {...}, C++ sẽ gán giá trị tương ứng.
+		
+		* Nếu danh sách ít hơn kích thước mảng, các phần tử còn lại tự động được khởi tạo mặc định (thường là 0).
+
+
+				// Khai báo với kích thước tường minh: Compiler cấp 5 × 4 = 20 bytes
+				int numbers[5] = {10, 20, 30, 40, 50};
+
+				// Suy diễn kích thước: Compiler tự đếm số phần tử trong ngoặc {}
+				int arr[] = {1, 2, 3, 4};   // Kích thước là 4
+
+				// Không khởi tạo: Chứa giá trị rác ngẫu nhiên trên Stack
+				int raw[10];                 
+
+				// Khởi tạo toàn bộ về 0 (Zero-initialization)
+				int zeroed[10] = {};
+
+##### **1.1.3. Bố cục bộ nhớ thực tế** 
+
+* Tính chất bộ nhớ liên tục là chìa khóa tạo nên hiệu năng truy xuất vượt trội của mảng.
+
+* Khi biết địa chỉ bắt đầu của mảng (Base Address), CPU có thể định vị bất kỳ phần tử nào thông qua phép tính số học phần cứng (Hardware Arithmetic).
+ 
+		int numbers[5] = {10, 20, 30, 40, 50};
+
+		Địa chỉ:  0x1000  0x1004  0x1008  0x100C  0x1010
+		           ┌───────┬───────┬───────┬───────┬───────┐
+		Giá trị:  │  10   │  20   │  30   │  40   │  50   │
+		           └───────┴───────┴───────┴───────┴───────┘
+		Chỉ số:    [0]     [1]     [2]     [3]     [4]
+
+		BaseAddress = 0x1000 (địa chỉ của numbers[0])
+
+* **Công thức định vi ô nhớ:** 
+		
+	* Do tính chất liên tục, địa chỉ của phần tử thứ `i` được tính trực tiếp bằng phép tính số học:
+
+			Addddress(A[i]) = BaseAddress + (i x sizeof(Type))
+
+		* Cơ chế này cho phép CPU truy xuất ngẫu nhiên (Random Access) bất kỳ phần tử nào với độ phức tạp thời gian luôn là **O(1)**
+
+		* Cho dù mảng có 10 phần tử hay 10 triệu phần tử, thời gian tìm đến phần tử thứ i là hoàn toàn bằng nhau: 1 phép nhân, 1 phép cộng và 1 lần truy xuất RAM.
+			
+
+	* VD: mảng `int numbers[5]` (sizeof(int) = 4):
+
+			Address(numbers[0]) = 0x1000 + (0 × 4) = 0x1000
+			Address(numbers[2]) = 0x1000 + (2 × 4) = 0x1008
+			Address(numbers[4]) = 0x1000 + (4 × 4) = 0x1010
+
+##### **1.1.4. Mảng đa chiều** 
+
+* Bộ nhớ máy tính thực chất chỉ là một dải tuyến tính 1 chiều
+
+* C++ lưu trữ theo chuẩn **Row-major order** (Lưu nối tiếp từng hàng).
+		
+		int matrix[3][4];  // Ma trận 3 hàng × 4 cột = 12 phần tử liên tục
+
+		// Bố cục bộ nhớ thực tế — lưu theo hàng (Row-major order):
+		// [0][0] [0][1] [0][2] [0][3] [1][0] [1][1] ... [2][3]
+
+		int grid[2][3] = {
+		    {1, 2, 3},  // Hàng 0
+		    {4, 5, 6}   // Hàng 1
+		};
+
+		// Truy xuất:
+		int val = grid[1][2];  // Phần tử hàng 1, cột 2 = 6
+
+##### **1.1.5. Hiện tượng suy biến thành con trỏ (Array Decay)** 
+		
+* Tên mảng không phải là một đối tượng dữ liệu hoàn chỉnh.
+
+*  Trong hầu hết các ngữ cảnh biểu thức (như truyền vào hàm), tên mảng sẽ tự động "suy biến" (decay) thành một con trỏ trỏ đến phần tử đầu tiên của nó (&arr[0]).
+
+* Điều này gây ra sự suy biến là mất mát thông tin kích thước
+
+* Khi một mảng được truyền vào hàm, hàm đó chỉ nhận được một địa chỉ, không hề biết mảng đó dài bao nhiêu phần tử.
+
+		#include <iostream>
+		using namespace std;
+
+		void printArray(int arr[]) {
+		    // Thực chất tương đương với int* arr
+		    cout << "Trong ham printArray:\n";
+		    cout << "sizeof(arr) = " << sizeof(arr) << " bytes\n";
+
+		    // Không biết mảng có bao nhiêu phần tử
+		    // Chỉ biết arr là địa chỉ của phần tử đầu tiên
+		}
+
+		int main() {
+		    int a[] = {10, 20, 30, 40, 50};
+
+		    cout << "Trong ham main:\n";
+		    cout << "sizeof(a) = " << sizeof(a) << " bytes\n";
+
+		    int n = sizeof(a) / sizeof(a[0]);
+		    cout << "So phan tu cua mang = " << n << endl;
+
+		    printArray(a);
+
+		    return 0;
+		}
+
+		// Output:
+		Trong ham main:
+		sizeof(a) = 20 bytes
+		So phan tu cua mang = 5
+
+		Trong ham printArray:
+		sizeof(arr) = 8 bytes
+
+##### **1.1.6. Hạn chế** 
+
+* Không tự mang theo siêu dữ liệu (metadata) về kích thước của chính nó.
+
+		#include <iostream>
+		using namespace std;
+
+		void printSize(int arr[]) {
+		    cout << sizeof(arr) << endl; // 8 bytes (kích thước con trỏ)
+		}
+
+		int main() {
+		    int a[5] = {1, 2, 3, 4, 5};
+
+		    cout << sizeof(a) << endl;   // 20 bytes (5 × 4)
+		    printSize(a);
+		}
+
+		// Output:
+		20
+		8
+	
+* Không thể sao chép bằng toán tử gán (arr1 = arr2 là bất hợp pháp).
+
+		int a[3] = {1, 2, 3};
+		int b[3];
+
+		// b = a;      // ❌ Lỗi biên dịch
+
+		Phải làm 
+
+		for (int i = 0; i < 3; i++)
+		    b[i] = a[i];	
+    
+* Hoàn toàn không kiểm tra giới hạn biên, dễ dẫn đến lỗi bảo mật.
+
+
+		#include <iostream>
+		using namespace std;
+
+		int main() {
+		    int a[3] = {10, 20, 30};
+
+		    cout << a[5] << endl;    // ❌ Truy cập vượt biên
+		}
+		// Output:
+		32767 hoặc 0
+
+##### **1.1.7. Giải pháp** 
+
+* C++ hiện đại cung cấp std::array<T, N> (thư viện <array>).
+
+*  Nó là một lớp bọc (wrapper class) chứa một mảng C-style bên trong, nhưng cung cấp giao diện đối tượng (OOP).
+
+* Nó có kích thước tĩnh, lưu trên Stack, hiệu năng tương đương 100% mảng C-style, nhưng không bị "suy biến" khi truyền vào hàm và hỗ trợ sao chép trực tiếp. 
+
+			#include <iostream>
+			#include <array>
+			using namespace std;
+
+			void printSize(array<int, 5> arr) {
+			    cout << "So phan tu = " << arr.size() << endl;
+			}
+
+			int main() {
+			    array<int, 5> a = {10, 20, 30, 40, 50};
+
+			    cout << a.size() << endl;   // 5
+
+			    printSize(a);               // Không bị array decay
+			}
+			
+		//Output:
+		
+		5
+		So phan tu = 5
+								
+#### **1.2. Giới hạn biên (Out-of-bounds) trong vùng nhớ tĩnh**	
+
+##### **1.2.1.Định nghĩa**	
+	
+*  Truy cập vượt biên (Out-of-bounds access) là hiện tượng đọc hoặc ghi vào chỉ số `index` nằm ngoài phạm vi hợp lệ `[0]` đến `[Size - 1]` của mảng.
+
+* Việc kiểm tra biên đòi hỏi CPU phải thực hiện lệnh so sánh `if (i >= 0 && i < size)` mỗi khi bạn gọi arr[i] 
+	
+##### **1.2.2. Stack Smashing**	
+	
+*  Khi bạn ghi đè ra ngoài mảng, hệ điều hành thường không biết. Dữ liệu sẽ tràn sang vùng nhớ liền kề trên Stack. Vùng nhớ này có thể chứa:
+
+	*  Các biến cục bộ khác đang hoạt động.
+	
+	*  Con trỏ khung (Frame Pointer).
+	
+	*  Địa chỉ trả về của hàm (Return Address)  
+
+	
+
+##### **1.2.3. Công cụ kiểm tra**
+	
+
+		# Biên dịch với AddressSanitizer:
+		g++ -fsanitize=address -g main.cpp -o main
+
+		# Khi chạy, ASan phát hiện và báo cáo ngay:
+		# ERROR: AddressSanitizer: stack-buffer-overflow on address 0x...
+		# WRITE of size 4 at 0x... thread T0
+		# #0 ... in main main.cpp:5
+
+				
+### **II.  STD::VECTOR**
+
+#### **2.1. Khái niệm** 
+
+* Là cấu trúc dữ liệu mảng động, quản lý một khối nhớ liên tục được cấp phát trên heap
+
+* Kết hợp hiệu suất truy xuất của mảng với khả năng thay đổi kích thước linh hoạt tại runtime
+
+#### **2.2. Đặc tính** 
+
+##### **2.2.1. Cấu trúc của `std::vector`**
+ 
+* Bản thân đối tượng std::vector nằm trên Stack và rất nhỏ gọn (thường 24 bytes trên hệ thống 64-bit).
+
+* Nó hoàn toàn không chứa dữ liệu thực tế mà duy trì 3 con trỏ quản lý khối nhớ Heap:
+
+	*  `_Myfirst:` Trỏ đến phần tử đầu tiên.
+	
+	* `_Mylast:` Trỏ đến vị trí ngay sau phần tử cuối cùng hiện có (đại diện cho **Size**).
+
+	* `_Myend:` Trỏ đến cuối khối nhớ Heap đã được cấp phát (đại diện cho **Capacity**).
+	
+		Stack:                              Heap:
+		┌───────────────────────┐          ┌─────────────────────────────────┐
+		│ std::vector<int>      │          │  10 │ 20 │ 30 │ ?? │ ?? │ ?? │  │
+		│  ptr  ────────────────┼─────────▶│  (size=3 phần tử thực tế)       │
+		│  size:     3          │          └─────────────────────────────────┘
+		│  capacity: 6          │           ↑                         ↑
+		└───────────────────────┘           size=3               capacity=6
+
+##### **2.2.2. Phân biệt Size và Capacity**
+
+*  **Kích thước (Size):**
+	
+	* Số lượng phần tử thực tế đang được lưu trữ 
+	
+	*  Truy xuất qua `size()`
+	
+*  **Dung lượng (Capacity):**
+	
+	* Tổng số phần tử tối đa mà vùng nhớ Heap đang cấp phát có thể chứa trước khi phải cấp phát lại
+	
+	*  Truy xuất qua `capacity()`
+
+				std::vector<int> v;
+				std::cout << v.size();			// 0 - không có phần tử
+				std::cout << v.capacity();   // 0 - chưa cấp phát
+				v.push_back(10);
+				v.push_back(20);
+				v.push_back(30);
+
+				std::cout << v.size();			// 3
+				std::cout << v.capacity();   // 4 hoặc 6
+
+##### **2.2.3.Cơ chế cấp phát lại (Reallocation)**
+
+* Khi gọi push_back() mà vector đã đầy (Size == Capacity), cơ chế **Cấp phát lại (Reallocation)** diễn ra:
+	
+	* Bước 1: Cấp phát khối Heap mới có capacity × 1.5 hoặc × 2
+			
+	* Bước 2: Di chuyển (move) hoặc sao chép toàn bộ phần tử cũ sang vùng mới
+			
+	* Bước 3: Khối Heap cũ bị giải phóng (delete[]).
+			
+	* Bước 4: Cập nhật con trỏ nội bộ trỏ đến vùng mới
+			
+	* Minh họa chi phí trung bình:
+
+
+				push_back lần 1: capacity 0→1, sao chép 0 phần tử. Chi phí: 1
+				push_back lần 2: capacity 1→2, sao chép 1 phần tử. Chi phí: 2
+				push_back lần 3: capacity 2→4, sao chép 2 phần tử. Chi phí: 3
+				push_back lần 4: Còn chỗ.                           Chi phí: 1
+				push_back lần 5: capacity 4→8, sao chép 4 phần tử. Chi phí: 5
+				...
+				Tổng chi phí cho N lần push_back ≈ 2N → Trung bình O(1) mỗi lần. 
+
+##### **2.2.4. Tối ưu hóa**
+
+* **reserve(N):**
+
+	* Chỉ là thao tác quản lý bộ nhớ.
+	
+	* Xin hệ điều hành chuẩn bị sẵn Capacity là N.
+	
+	* Không tạo ra phần tử mới nào, Size vẫn giữ nguyên     
+
+			std::vector<int> v;
+			v.reserve(1000);        // cấp phát trước dung lượng cho 1000 phần tử
+
+			// 1000 lần push_back sau đó không gây bất kỳ cấp phát lại nào
+			for(int i = 0; i < 1000; ++i){
+				v.push_back(i);
+			}
+			std::cout << v.size();		   // 1000
+			std::cout << v.capacity(); // 1000 - không thay đổi
+
+* **resize(N)**:
+
+	* Là thao tác thay đổi dữ liệu
+	
+	* Buộc Size phải bằng N.
+	
+	* Nếu N lớn hơn Size hiện tại, nó sẽ thực sự khởi tạo (construct) thêm các phần tử mới (thường mang giá trị 0) vào mảng.
+
+			std::vector<int> v;
+
+			v.reserve(10);  // Chỉ thay đổi capacity — size vẫn là 0
+			                // Không tạo phần tử, không khởi tạo giá trị
+
+			v.resize(10);   // Thay đổi CẢ size VÀ capacity — tạo 10 phần tử (= 0)
+			                // v[0] đến v[9] đều hợp lệ và có giá trị 0
+
+#### **2.3. Thao tác chèn và truy xuất** 
+
+##### **2.3.1. Khởi tạo và sao chép an toàn**
+ 
+* `std::vector` hỗ trợ ngữ nghĩa giá trị (Value semantics) hoàn chỉnh
+
+* Việc gán v2 = v1 sẽ thực hiện "Deep Copy" (sao chép toàn bộ bộ nhớ Heap độc lập), không phải chỉ sao chép con trỏ, đảm bảo tính an toàn cực cao.
+
+		#include <iostream>
+		#include <vector>
+		using namespace std;
+
+		int main() {
+		    vector<int> v1 = {10, 20, 30};
+
+		    vector<int> v2 = v1;    // Deep Copy
+
+		    v2[0] = 100;            // Chỉ thay đổi v2
+
+		    cout << "v1: ";
+		    for (int x : v1)
+		        cout << x << " ";
+
+		    cout << "\nv2: ";
+		    for (int x : v2)
+		        cout << x << " ";
+
+		    return 0;
+		}
+
+		// Output:
+		v1: 10 20 30
+		v2: 100 20 30
+
+##### **2.3.2. push_back và emplace_back**
+ 
+* **push_back(T):**
+
+	*  Nhận vào một đối tượng đã được tạo sẵn, sau đó sao chép (copy) hoặc di chuyển (move) đối tượng đó vào cuối vector.
+
+			#include <iostream>
+			#include <vector>
+			using namespace std;
+
+			int main() {
+			    vector<int> v;
+
+			    int x = 10;     // Đối tượng đã được tạo sẵn
+
+			    v.push_back(x); // Sao chép x vào cuối vector
+
+			    x = 20;         // Thay đổi x không ảnh hưởng đến vector
+
+			    cout << v[0];   // 10
+
+			    return 0;
+			}
+
+			// Output:
+			10
+
+* **emplace_back(args...):**
+
+	*  Nhận vào các tham số dùng để tạo nên đối tượng
+	
+	*  Vector sẽ tự động phân bổ bộ nhớ trước, sau đó khởi tạo đối tượng trực tiếp tại vị trí đó (In-place construction)
+
+				#include <iostream>
+				#include <vector>
+				using namespace std;
+
+				class Point {
+				public:
+				    int x, y;
+
+				    Point(int x, int y) : x(x), y(y) {
+				        cout << "Constructor\n";
+				    }
+				};
+
+				int main() {
+				    vector<Point> points;
+
+				    points.emplace_back(1, 2); // Tạo trực tiếp đối tượng tại cuối vector
+
+				    cout << points[0].x << ", " << points[0].y;
+
+				    return 0;
+				}
+				
+			//Output:
+			Constructor
+			1, 2
+
+##### **2.3.3. Các phương thức truy xuất phần tử**
+ 
+* **vector[i] (Tốc độ tuyệt đối):**
+
+	*  Biên dịch thẳng thành phép tính con trỏ `*(start_ptr + i)`.
+	
+	*  Không kiểm tra gì thêm
+
+			#include <iostream>
+			#include <vector>
+			using namespace std;
+
+			int main() {
+			    vector<int> v = {10, 20, 30};
+
+			    cout << v[1] << endl; // 20
+
+			    // Truy cập vượt biên
+			    cout << v[5] << endl; // Undefined Behavior
+			}
+			
+			//Output:
+			20
+			32767	 hoặc 0
+
+* **vector.at(i) (An toàn tuyệt đối):**
+
+	*  Bên trong hàm này chứa lệnh if (i >= size) throw std::out_of_range;.
+	
+	*  Chấp nhận đánh đổi một phần nhỏ hiệu năng CPU để đổi lấy sự an toàn trong môi trường dữ liệu không thể dự đoán trước.
+
+			#include <iostream>
+			#include <vector>
+			using namespace std;
+
+			int main() {
+			    vector<int> v = {10, 20, 30};
+
+			    cout << v.at(1) << endl; // 20
+
+			    cout << v.at(5) << endl; // Vượt biên
+			}
+			
+			//Output:
+
+			20
+			terminate called after throwing an instance of 'std::out_of_range'
+			
+### **III.  CÁC KÝ HIỆU PHÂN TÍCH ĐỘ PHỨC TẠP**
+
+#### **3.1. Toán tử phạm vi (`::`)**
+ 
+##### **3.1.1. Namespace và Scope**
+ 
+* Trong các dự án phần mềm lớn, hiện tượng trùng lặp tên biến, tên hàm (Name Collision) là không thể tránh khỏi.
+
+* C++ giải quyết bằng khái niệm namespace.
+
+* Toán tử `::` (Scope Resolution Operator) đóng vai trò như các dấu gạch chéo / trong đường dẫn thư mục máy tính, giúp trình biên dịch định hướng chính xác đến thực thể cần tìm. 
+
+		#include <iostream>
+		using namespace std;
+
+		namespace Physics {
+		    double PI = 3.14159;
+		}
+
+		namespace Geometry {
+		    double PI = 3.14;
+		}
+
+		int main() {
+		    cout << Physics::PI << endl;   // 3.14159
+		    cout << Geometry::PI << endl; // 3.14
+
+		    return 0;
+		}
+		// Output:
+		3.14159
+		3.14		
+
+
+
+##### **3.1.2. Name Hiding** 
+
+* Khi một biến cục bộ có cùng tên với một biến toàn cục, biến cục bộ sẽ che khuất (shadow) biến toàn cục.
+
+* Toán tử `::` đứng độc lập ở đầu (không có tiền tố) báo cho trình biên dịch bỏ qua phạm vi cục bộ hiện tại và tìm kiếm trực tiếp trên phạm vi toàn cục (Global Scope).
+ 
+		int x = 10; // Global
+
+		void doSomething() {
+		    int x = 20; // Local
+		    cout << x;   // In 20
+		    cout << ::x; // In 10 (Sử dụng toán tử phân giải toàn cục)
+		}
+
+#### **3.2. Tham số kiểu `<T>`**	
+		
+##### **3.2.1. Generic Programming**	
+
+*  `<T>` là nền tảng của cơ chế **Template** trong C++, cho phép hiện thực hóa **đa hình tại thời điểm biên dịch (compile-time polymorphism)**
+
+*  Khác với lập trình hướng đối tượng, vốn đạt được tính đa hình tại thời điểm chạy (runtime) thông qua con trỏ và hàm ảo, lập trình tổng quát cho phép một đoạn mã duy nhất hoạt động với nhiều kiểu dữ liệu khác nhau.
+
+* Thay vì phải viết riêng một hàm sắp xếp cho `int`, một hàm khác cho `double`, ta chỉ cần mô tả thuật toán một lần trên một kiểu dữ liệu tổng quát `T`.
+
+* Ký hiệu `T` đóng vai trò tương tự một biến số trong toán học, nhưng thay vì biểu diễn một giá trị cụ thể, nó đại diện cho một **kiểu dữ liệu**, và sẽ được trình biên dịch thay thế bằng kiểu thực tế khi sinh mã. 
+
+* VD:
+
+		//TH1
+
+		void printInt(int x) {
+		    cout << x << endl;
+		}
+
+		void printDouble(double x) {
+		    cout << x << endl;
+		}
+
+		void printString(string x) {
+		    cout << x << endl;
+		}
+
+		// TH2
+		#include <iostream>
+		using namespace std;
+
+		template <typename T>
+		void print(T x) {
+		    cout << x << endl;
+		}
+
+		int main() {
+		    print(10);       // T được thay bằng int
+		    print(3.14);     // T được thay bằng double
+		    print("Hello");  // T được thay bằng const char*
+
+		    return 0;
+		} 
+
+
+
+##### **3.2.2. Quá trình khởi tạo Template**	
+
+*  Mã nguồn của một **template** chỉ đóng vai trò như một bản thiết kế tổng quát và chưa phải là mã thực thi.
+
+*  Chỉ khi một kiểu dữ liệu cụ thể được cung cấp, chẳng hạn `std::vector<int>`, trình biên dịch mới tiến hành quá trình **cụ thể hóa (template instantiation)**
+
+*  Trong quá trình này, mọi xuất hiện của tham số kiểu `T` sẽ được thay thế bằng `int`, từ đó sinh ra một lớp hoàn chỉnh và biên dịch lớp đó thành mã máy.
+
+*  Nếu chương trình tiếp tục sử dụng `std::vector<double>`, trình biên dịch sẽ tạo thêm một phiên bản khác được tối ưu riêng cho kiểu `double`
+
+* Nói cách khác, mỗi kiểu dữ liệu được sử dụng sẽ tương ứng với một bản hiện thực độc lập của template. 
+
+* **Ưu điểm:**
+
+	* Vì mã máy được sinh ra riêng cho từng kiểu dữ liệu, mọi thao tác đều được tối ưu ngay tại thời điểm biên dịch, không phát sinh chi phí đa hình động 
+
+			#include <iostream>
+			using namespace std;
+
+			template <typename T>
+			T add(T a, T b) {
+			    return a + b;
+			}
+
+			int main() {
+			    cout << add(3, 5) << endl;        // T = int
+			    cout << add(1.2, 3.4) << endl;    // T = double
+			}
+
+			// Trình biên dịch sẽ sinh ra 2 hàm riêng biệt
+			int add(int a, int b) {
+			    return a + b;
+			}
+
+			double add(double a, double b) {
+			    return a + b;
+			}
+
+* **Nhược điểm:**
+
+	* Việc tạo ra nhiều phiên bản mã khác nhau cho các kiểu dữ liệu khác nhau làm gia tăng kích thước của chương trình thực thi (binary size)
+
+			#include <iostream>
+			using namespace std;
+
+			template <typename T>
+			void print(T x) {
+			    cout << x << endl;
+			}
+
+			int main() {
+			    print(10);        // T = int
+			    print(3.14);      // T = double
+			    print('A');       // T = char
+			    print("Hello");   // T = const char*
+			}
+
+			// Trình biên dịch sẽ tạo ra 4 phiên bản khác nhau
+			void print(int);
+			void print(double);
+			void print(char);
+			void print(const char*);
+
+
+
+#### **3.3. Toán tử lấy địa chỉ và giải tham chiếu**	
+		
+##### **3.3.1. Ký hiệu & (Tham chiếu và lấy địa chỉ)**	
+
+*  **Khai báo tham chiếu - L-value Reference**
+
+	*  Khi & đứng cạnh tên kiểu dữ liệu (vd: int&), nó tạo ra một **Bí danh (Alias)**.
+	
+	*  Về mặt lý thuyết, tham chiếu không phải là một biến độc lập, nó không có địa chỉ bộ nhớ riêng
+	
+	* Nó chỉ là một tên gọi khác trỏ cứng vĩnh viễn vào biến gốc. 
+
+			int x = 10;
+			int& ref = x; // ref và x là một, cùng chia sẻ vật lý trên 1 ô nhớ.
+
+*  **Toán tử Lấy địa chỉ**
+
+	*  Khi `&` đứng trước một biến đang hoạt động (vd: `&x`), nó là một hàm phần cứng, có nhiệm vụ "Chạy vào RAM, lấy số định danh địa chỉ (Hexadecimal) của ô nhớ chứa biến này và trả về".
+
+			int x = 10;
+			int& ref = x; // ref và x là một, cùng chia sẻ vật lý trên 1 ô nhớ.
+
+##### **3.3.2. Ký hiệu * (Khai báo con trỏ và giải tham chiếu)**	
+
+*  **Khai báo con trỏ:**
+
+	* Khi `*` đứng cạnh kiểu dữ liệu (vd: `int*`), nó khai báo một biến hoàn toàn mới, độc lập, có ô nhớ riêng biệt.  
+
+	*  Giá trị mà nó lưu trữ không phải là số học thông thường, mà là một **chuỗi địa chỉ Hexadecimal**
+
+*  **Toán tử giải tham chiếu**:**
+
+	* Khi `*` đứng trước một con trỏ (vd: `*ptr`), nó thực hiện thao tác chuyển hướng.
+
+	*  Lệnh này yêu cầu CPU: "Đọc chuỗi địa chỉ đang lưu trong ptr, nhảy ngay đến ô nhớ có địa chỉ đó trên RAM, và tương tác trực tiếp với dữ liệu tại đó".
+
+##### **3.3.3. Pointer Arithmetic**	
+
+*  Mặc dù mọi con trỏ đều lưu trữ một địa chỉ bộ nhớ dưới dạng số nguyên, các kiểu con trỏ khác nhau như `int*` hay `char*` vẫn được phân biệt vì chúng mang theo thông tin về kiểu dữ liệu mà chúng trỏ tới.
+
+* Thông tin kiểu này đóng vai trò quan trọng trong **phép tính con trỏ (Pointer Arithmetic)**.
+
+* Khi thực hiện biểu thức:
+
+		 ptr + 1
+
+	* C++ không đơn thuần cộng thêm 1 byte vào địa chỉ hiện tại.
+	
+	* Thay vào đó, địa chỉ mới được tính theo công thức:
+	
+			Địa chỉ mới=Địa chỉ hiện tại+1×sizeof(T)
+			
+		*  trong đó `T` là kiểu dữ liệu mà con trỏ trỏ tới.
+
+* VD;
+
+		#include <iostream>
+		using namespace std;
+
+		int main() {
+		    int arr[] = {10, 20, 30, 40};
+
+		    int* ptr = arr;
+
+		    cout << *ptr << endl;       // 10
+		    cout << *(ptr + 1) << endl; // 20
+		    cout << *(ptr + 2) << endl; // 30
+		}
+																										
+   </details> 
+
