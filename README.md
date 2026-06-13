@@ -1458,3 +1458,699 @@ int globalCounter = 0;          // Static duration — tồn tại suốt chươ
 																							
    </details> 
 
+
+<details>
+    <summary><strong>BÀI 3: BIỂU THỨC VÀ TOÁN TỬ</strong></summary>
+	
+## **BÀI 3: BIỂU THỨC VÀ TOÁN TỬ**
+
+### **I.  TOÁN TỬ VÀ TRẬT TỰ ĐÁNH GIÁ BIỂU THỨC**
+
+#### **1.1. Biểu thức (Expressions)**
+
+##### **1.1.1. Định nghĩa** 
+	
+*  Biểu thức là một tổ hợp các toán hạng (operands) và toán tử (operators) mà trình biên dịch đánh giá để tính toán và trả về một giá trị duy nhất.
+
+##### **1.1.2. Thuộc tính** 
+		
+* Mọi biểu thức trong C++ đều có hai thuộc tính:
+			
+	*  **Giá trị (Value):** Kết quả tính toán của biểu thức.
+	
+	* **Kiểu (Type):** Kiểu dữ liệu của giá trị trả về — xác định tại thời gian biên dịch.
+
+							
+#### **1.2. Nhóm toán tử số học**	
+
+##### **1.2.1.Các toán tử số học cơ bản**	
+	
+*  C++ cung cấp năm toán tử số học nhị phân: 
+
+	* `+` (cộng)
+	
+	* `-` (trừ)
+	
+	* `*` (nhân)
+	
+	* `/` (chia)
+	
+	* `%` (chia lấy dư).
+	
+##### **1.2.2. Implicit Type Promotion**	
+	
+*  Khi thực hiện phép tính giữa hai toán hạng có kiểu khác nhau, trình biên dịch tự động "thăng cấp" (promote) kiểu nhỏ hơn lên kiểu lớn hơn để bảo toàn độ chính xác.
+
+*  Quy tắc chung: `int` → `long` → `float` → `double`.
+
+		int   a = 5;
+		double b = 2.0;
+		auto  c = a + b;   // a được thăng cấp thành double trước khi cộng
+		                   // c có kiểu double, giá trị 7.0
+	
+##### **1.2.3.Integer Truncation**
+	
+* Phép chia `/` giữa hai số nguyên luôn trả về số nguyên — phần thập phân bị loại bỏ hoàn toàn ở cấp độ phần cứng.
+
+* Đây không phải làm tròn toán học mà là **cắt cụt về phía 0 (truncation toward zero)**.
+
+		int result1 = 5 / 2;    // 2  — không phải 2.5
+		int result2 = 7 / 2;    // 3  — không phải 3.5
+		int result3 = -7 / 2;   // -3 — cắt về phía 0, không phải -4
+
+		// Để có kết quả số thực: ít nhất một toán hạng phải là số thực
+		double r1 = 5.0 / 2;    // 2.5
+		double r2 = 5 / 2.0;    // 2.5
+		double r3 = static_cast<double>(5) / 2;  // 2.5 — ép kiểu tường minh
+
+##### **1.2.4. Toán tử chia lấy dư `%` (Modulo)**
+	
+* Toán tử `%` chỉ hoạt động trên kiểu số nguyên
+
+* Kết quả mang dấu của toán hạng bên trái.
+
+		int r1 =  7 %  3;   //  1  (7 = 2×3 + 1)
+		int r2 = -7 %  3;   // -1  (dấu theo toán hạng trái: -7)
+		int r3 =  7 % -3;   //  1  (dấu theo toán hạng trái: 7)
+		
+* Ứng dụng thực tiễn trong lập trình nhúng:
+
+	* Kiểm tra chẵn/lẻ (`n % 2`)
+	
+	* Vòng tròn bộ đệm vòng (`index % BUFFER_SIZE`)
+	
+	* Chuyển đổi giây sang phút/giây.
+
+##### **1.2.5. Toán tử tăng giảm**
+	
+	int x = 5;
+
+	// Tiền tố (prefix): tăng TRƯỚC, trả về giá trị đã tăng
+	int a = ++x;   // x = 6, a = 6
+
+	// Hậu tố (postfix): trả về giá trị CŨ, tăng SAU
+	int b = x++;   // b = 6, x = 7 (sau phép gán)
+
+#### **1.3. Nhóm toán tử gán**	
+
+##### **1.3.1. Định nghĩa và cú pháp**	
+		
+*  Các toán tử gán phức hợp kết hợp một phép tính số học (hoặc bit) với phép gán vào một thao tác đơn nhất:
+
+		int x = 10;
+
+		x += 5;    // Tương đương x = x + 5  → x = 15
+		x -= 3;    // Tương đương x = x - 3  → x = 12
+		x *= 2;    // Tương đương x = x * 2  → x = 24
+		x /= 4;    // Tương đương x = x / 4  → x = 6
+		x %= 4;    // Tương đương x = x % 4  → x = 2
+
+		// Toán tử bit phức hợp:
+		x &= 0xFF; // AND bit
+		x |= 0x01; // OR bit
+		x ^= 0xF0; // XOR bit
+		x <<= 2;   // Dịch trái 2 bit
+		x >>= 1;   // Dịch phải 1 bit
+
+##### **1.3.2. Hiệu suất mã máy**	
+		
+*  `a += b` hiệu quả hơn `a = a + b` vì:
+
+	*  `a = a + b`: Trình biên dịch đánh giá địa chỉ bộ nhớ của `a` **hai lần** (một lần để đọc, một lần để ghi).
+	
+	*  `a += b`: Trình biên dịch đánh giá địa chỉ bộ nhớ của `a` chỉ **một lần**.
+
+#### **1.4. Nhóm toán tử quan hệ và cấu trúc logic nhị phân**	
+		
+##### **1.4.1. Nhóm toán tử quan hệ**
+
+		int a = 5, b = 10;
+
+		bool r1 = (a == b);  // false — đẳng thức
+		bool r2 = (a != b);  // true  — bất đẳng thức
+		bool r3 = (a <  b);  // true  — nhỏ hơn
+		bool r4 = (a >  b);  // false — lớn hơn
+		bool r5 = (a <= b);  // true  — nhỏ hơn hoặc bằng
+		bool r6 = (a >= b);  // false — lớn hơn hoặc bằng
+		
+*  **Nhầm `=` (gán) với `==` (so sánh)**
+
+		int x = 5;
+		if (x = 10) { }   // LỖI LOGIC: Gán 10 vào x, điều kiện luôn true!
+		if (x == 10) { }  // ĐÚNG: So sánh x với 10
+
+		// Kỹ thuật "Yoda condition" tránh lỗi này:
+		if (10 == x) { }  // Nếu nhầm = thay vì ==, compiler báo lỗi ngay
+
+##### **1.4.2. Nhóm toán tử logic nhị phân**
+
+		bool a = true, b = false;
+
+		bool r1 = (a && b);  // false — AND: cả hai phải true
+		bool r2 = (a || b);  // true  — OR: ít nhất một true
+		bool r3 = (!a);      // false — NOT: đảo ngược
+
+		// So sánh: Toán tử bit tương ứng (& | ^) — KHÔNG dùng cho logic!
+		// & và | KHÔNG có short-circuit, luôn đánh giá cả hai vế	
+
+##### **1.4.3. Toán tử so sánh ba chiều (Spaceship Operator `<=>`)**
+
+		#include <compare>
+
+		int a = 5, b = 10;
+		auto result = (a <=> b);  // std::strong_ordering::less
+
+		if (result < 0)  { /* a < b */ }
+		if (result == 0) { /* a == b */ }
+		if (result > 0)  { /* a > b */ }
+
+#### **1.5. Độ ưu tiên và trật tự**	
+		
+##### **1.5.1. Độ ưu tiên**
+
+* Khi một biểu thức chứa nhiều toán tử, độ ưu tiên xác định toán tử nào được đánh giá trước.
+
+* Bảng độ ưu tiên từ cao đến thấp (trích dẫn các mức quan trọng):
+
+		Mức 1 (Cao nhất): ()  []  .  ->  ++/--(hậu tố)
+		Mức 2:            !  ~  ++(tiền tố)  --(tiền tố)  sizeof  &  *  (cast)
+		Mức 3:            *  /  %
+		Mức 4:            +  -
+		Mức 5:            <<  >>
+		Mức 6:            <  <=  >  >=
+		Mức 7:            ==  !=
+		Mức 8:            &  (Bitwise AND)
+		Mức 9:            ^  (Bitwise XOR)
+		Mức 10:           |  (Bitwise OR)
+		Mức 11:           &&
+		Mức 12:           ||
+		Mức 13:           ?:  (Ternary)
+		Mức 14 (Thấp):   =  +=  -=  ...  (Gán)
+		
+*  **VD:**
+
+		int result = 2 + 3 * 4;      // 14 — nhân trước cộng
+		int result = (2 + 3) * 4;    // 20 — ngoặc đơn cao nhất
+
+		bool test = 5 > 3 && 2 < 4;  // true — > và < trước &&
+		bool mask = 0x0F & 0xFF == 0x0F;  // SAI Ý! == cao hơn & → 0x0F & true
+		                                   // Đúng phải là: (0x0F & 0xFF) == 0x0F
+
+##### **1.5.2. Trật tự**
+
+* Khi nhiều toán tử có **cùng mức độ ưu tiên** xuất hiện liên tiếp, trật tự kết hợp xác định hướng đánh giá:
+
+	*  **Trái sang phải (Left-to-Right):** Phổ biến nhất — áp dụng cho hầu hết toán tử số học và quan hệ.
+
+			int r = 100 / 10 / 2;   // (100 / 10) / 2 = 5  — không phải 100 / (10/2) = 20
+			int s = 10 - 3 - 2;     // (10 - 3) - 2 = 5
+
+	*  **Phải sang trái (Right-to-Left):** Áp dụng cho toán tử gán và toán tử một ngôi.
+
+			int a, b, c;
+			a = b = c = 5;   // a = (b = (c = 5)) — gán từ phải sang trái
+			int x = -(-5);   // -(-5) = 5 — toán tử một ngôi từ phải sang trái
+
+#### **1.6. Bitwise Operations**	
+		
+##### **1.6.1. Khái niệm**
+
+* Toán tử bitwise thực hiện phép tính trực tiếp trên từng bit nhị phân của toán hạng.
+
+* Đây là nhóm toán tử có tốc độ thực thi nhanh nhất ở cấp độ CPU — ánh xạ trực tiếp sang các lệnh máy AND, OR, XOR, NOT, SHL, SHR.
+
+##### **1.6.2. Toán tử Bitwise cơ bản**
+
+		Toán tử   Tên           Quy tắc từng bit
+		&         Bitwise AND   1 & 1 = 1 ; 1 & 0 = 0 ; 0 & 0 = 0
+		|         Bitwise OR    1 | 1 = 1 ; 1 | 0 = 1 ; 0 | 0 = 0
+		^         Bitwise XOR   1 ^ 1 = 0 ; 1 ^ 0 = 1 ; 0 ^ 0 = 0
+		~         Bitwise NOT   ~1 = 0    ; ~0 = 1
+
+* **VD:**
+
+			uint8_t a = 0b10110101;   // 0xB5 = 181
+			uint8_t b = 0b11001100;   // 0xCC = 204
+
+			uint8_t r1 = a & b;   // 0b10000100 = 0x84 — Chỉ bit nào cả hai đều 1
+			uint8_t r2 = a | b;   // 0b11111101 = 0xFD — Bit nào ít nhất một là 1
+			uint8_t r3 = a ^ b;   // 0b01111001 = 0x79 — Bit nào khác nhau
+			uint8_t r4 = ~a;      // 0b01001010 = 0x4A — Đảo ngược toàn bộ
+
+##### **1.6.3. Kỹ thuật bitmask**
+
+* Kỹ thuật 1: Bật một bit (Set a bit)
+
+		uint32_t reg = 0x00000000;
+		uint32_t bit_mask = (1U << 5);  // Bật bit số 5
+		reg |= bit_mask;                // reg = 0x00000020
+
+* Kỹ thuật 2: Tắt một bit (Clear a bit)
+
+		uint32_t reg = 0xFFFFFFFF;
+		uint32_t bit_mask = (1U << 5);  // Tắt bit số 5
+		reg &= ~bit_mask;               // reg = 0xFFFFFFDF
+
+* Kỹ thuật 3: Kiểm tra trạng thái một bit (Test a bit)
+
+		uint32_t STATUS_REG = 0b00100000;
+		bool bit5_is_set = (STATUS_REG & (1U << 5)) != 0;  // true
+
+* VD:
+
+		// Giả lập thanh ghi GPIO của STM32
+		volatile uint32_t* GPIOA_ODR = reinterpret_cast<uint32_t*>(0x40020014);
+
+		constexpr uint32_t LED_PIN = 5;  // PA5
+
+		// Bật LED:  *GPIOA_ODR |= (1U << LED_PIN);
+		// Tắt LED:  *GPIOA_ODR &= ~(1U << LED_PIN);
+		// Toggle:   *GPIOA_ODR ^= (1U << LED_PIN);
+
+##### **1.6.4. Toán tử dịch bit (Bitwise Shift)**
+
+* Dịch trái `<<`: Dịch tất cả bit sang trái `n` vị trí, điền `0` vào bên phải.
+
+	*  Tương đương nhân với 2ⁿ — nhưng nhanh hơn toán tử `*` nhiều lần.
+
+			int x = 3;
+			int r1 = x << 1;   // 6  (3 × 2¹)
+			int r2 = x << 2;   // 12 (3 × 2²)
+			int r3 = x << 3;   // 24 (3 × 2³)
+
+			// Tạo bitmask nhanh:
+			uint32_t mask = 1U << 15;  // Bit 15 bật
+
+* Dịch phải `>>`: Dịch tất cả bit sang phải `n` vị trí.
+
+	*  Tương đương chia cho 2ⁿ (với số nguyên không dấu).
+	
+			int x = 32;
+			int r1 = x >> 1;   // 16 (32 ÷ 2¹)
+			int r2 = x >> 2;   // 8  (32 ÷ 2²)
+			int r3 = x >> 3;   // 4  (32 ÷ 2³)
+
+* **Lưu ý:**
+
+	* Dịch phải số nguyên **có dấu** âm là hành vi phụ thuộc cài đặt (implementation-defined) trong C++.
+	
+	* Luôn dùng kiểu không dấu (`uint32_t`, `uint8_t`...) khi thao tác bitwise để đảm bảo tính xác định.   
+				
+### **II.  BRANCHING**
+
+#### **2.1. IF/ELSE** 
+
+##### **2.1.1.Cú pháp cơ bản**
+ 
+		if (điều_kiện_1) {
+		    // Thực thi khi điều_kiện_1 là true
+		} else if (điều_kiện_2) {
+		    // Thực thi khi điều_kiện_1 là false VÀ điều_kiện_2 là true
+		} else {
+		    // Thực thi khi tất cả điều kiện trên đều false
+		}
+
+* Trình biên dịch đánh giá các điều kiện tuần tự từ trên xuống và dừng lại tại điều kiện đầu tiên là `true`.
+
+* Một khi đã khớp, các nhánh còn lại bị bỏ qua hoàn toàn — không kiểm tra thêm. 
+
+##### **2.1.2.Toán tử điều kiện ba ngôi (Ternary Operator)**
+
+		// Cú pháp: điều_kiện ? giá_trị_nếu_true : giá_trị_nếu_false
+		int max = (a > b) ? a : b;
+		std::string status = (errorCode == 0) ? "OK" : "Error";
+
+		// Tương đương với:
+		int max;
+		if (a > b) max = a;
+		else max = b;
+	
+##### **2.1.3. Khối khởi tạo trong `if` — Init-statement (C++17)**
+
+* C++17 cho phép khai báo và khởi tạo biến ngay bên trong dấu ngoặc đơn của lệnh `if`, trước điều kiện, ngăn cách bởi dấu chấm phẩy `;`.
+
+
+		// Cú pháp: if (khởi_tạo; điều_kiện)
+		if (int status = checkSystemStatus(); status == 0) {
+		    std::cout << "Hệ thống bình thường.\n";
+		} else {
+		    std::cout << "Mã lỗi: " << status << "\n";
+		}
+		// Biến status KHÔNG tồn tại ở đây — đã bị hủy khi ra khỏi if/else
+
+##### **2.1.4. `if constexpr` — Rẽ nhánh tại thời gian biên dịch (C++17)**
+
+	template<typename T>
+	void process(T value) {
+	    if constexpr (std::is_integral_v<T>) {
+	        // Nhánh này chỉ được biên dịch khi T là kiểu số nguyên
+	        std::cout << "Integer: " << value << "\n";
+	    } else {
+	        // Nhánh này chỉ được biên dịch khi T không phải số nguyên
+	        std::cout << "Other: " << value << "\n";
+	    }
+	}
+
+#### **2.2. SWITCH-CASE** 
+
+##### **2.2.1. Khái niệm**
+ 
+* `switch` là cấu trúc rẽ nhánh tối ưu cho việc so sánh đẳng thức (equality comparison) một biến với nhiều giá trị hằng số rời rạc.
+
+* Điều kiện sử dụng `switch`:
+
+	*  Biểu thức điều kiện phải có kiểu số nguyên (`int`, `char`, `enum`) hoặc kiểu chuyển đổi ngầm được sang số nguyên.
+	
+	*  Mỗi `case` phải là một **hằng số** biết trước lúc biên dịch — không thể dùng biến.
+	
+	*  Không thể dùng cho điều kiện phạm vi (`> 10`, `< 5`) hay so sánh chuỗi — đó là nhiệm vụ của `if/else`.
+
+##### **2.2.2. Cú pháp**
+
+		int errorCode = getErrorCode();
+
+		switch (errorCode) {
+		    case 0:
+		        std::cout << "Success\n";
+		        break;             // QUAN TRỌNG: Thoát khỏi switch
+
+		    case 1:
+		        std::cout << "Warning\n";
+		        break;
+
+		    case 2:               // Fall-through có chủ ý
+		    case 3:               // Case 2 và 3 dùng chung xử lý
+		        std::cout << "Minor Error\n";
+		        break;
+
+		    case 4:
+		        logError();
+		        [[fallthrough]];  // C++17: Báo compiler fall-through là chủ ý
+		    case 5:
+		        std::cout << "Critical Error\n";
+		        break;
+
+		    default:
+		        std::cout << "Unknown error: " << errorCode << "\n";
+		        break;
+		}
+
+##### **2.2.3. Đặc điểm kiến trúc: Jump Table**
+
+	if/else chain:        switch (Jump Table):
+	  if x == 0?   ──┐     index = x
+	  if x == 1?   ──┤     jump to table[index]
+	  if x == 2?   ──┤     ┌── case 0: addr_A
+	  if x == 3?   ──┤     ├── case 1: addr_B
+	  ...          ──┘     ├── case 2: addr_C
+	  (O(n) so sánh)       └── ...
+	                        (O(1) nhảy trực tiếp)
+
+* **VD:**
+		
+		enum class SystemState { IDLE, RUNNING, ERROR, SHUTDOWN };
+
+		SystemState state = SystemState::RUNNING;
+
+		switch (state) {
+		    case SystemState::IDLE:     handleIdle();     break;
+		    case SystemState::RUNNING:  handleRunning();  break;
+		    case SystemState::ERROR:    handleError();    break;
+		    case SystemState::SHUTDOWN: handleShutdown(); break;
+		    // Không cần default — compiler cảnh báo nếu thiếu case
+		}
+			
+
+			
+### **III.  KHỐI CHU TRÌNH LẶP**
+
+#### **3.1. while và do-while**
+ 
+##### **3.1.1. while (Pre-condition)**
+ 
+* Đánh giá biểu thức điều kiện **trước** khi thực thi thân vòng lặp.
+
+* Số lần thực thi tối thiểu là **0** — nếu điều kiện sai ngay từ đầu, thân vòng lặp không bao giờ chạy.
+
+		// Cú pháp:
+		while (điều_kiện) {
+		    // Thực thi khi điều_kiện là true
+		}
+
+* Khi không biết trước số lần lặp — phụ thuộc vào trạng thái dữ liệu hoặc sự kiện bên ngoài.
+
+		// Đọc dữ liệu cho đến khi nhận được ký tự kết thúc:
+		char ch;
+		while (std::cin.get(ch) && ch != '\n') {
+		    processChar(ch);
+		}
+
+		// Chờ thiết bị sẵn sàng (polling trong embedded):
+		while ((UART_STATUS_REG & UART_TX_READY_BIT) == 0) {
+		    // Busy-wait cho đến khi UART sẵn sàng gửi
+		}
+
+##### **3.1.2. do-while (Post-condition)** 
+
+* Thực thi thân vòng lặp **trước**, sau đó mới đánh giá điều kiện.
+
+* Số lần thực thi tối thiểu luôn là **1** — thân vòng lặp chạy ít nhất một lần bất kể điều kiện. 
+ 
+		// Cú pháp:
+		do {
+		    // Thực thi ít nhất một lần
+		} while (điều_kiện);    // Chú ý: dấu ; sau ngoặc đơn là bắt buộc
+		
+* VD: vòng lặp nhập dữ liệu — cần nhập ít nhất một lần trước khi kiểm tra
+
+		int value;
+		do {
+		    std::cout << "Nhap so nguyen duong (> 0): ";
+		    std::cin >> value;
+		    if (value <= 0) {
+		        std::cout << "Gia tri khong hop le. Vui long nhap lai.\n";
+		    }
+		} while (value <= 0);
+		// Đảm bảo value > 0 sau khi thoát vòng lặp
+
+
+#### **3.2. FOR**	
+		
+##### **3.2.1. Cú pháp và luồng thực thi**	
+
+*  Vòng lặp `for` đóng gói toàn bộ cấu trúc điều khiển lặp vào một dòng duy nhất:
+
+		for (khởi_tạo; điều_kiện; bước_nhảy) {
+		    // Thân vòng lặp
+		}
+
+*  Thứ tự thực thi:
+
+		for (int i = 0; i < 10; ++i) {
+		    std::cout << i << " ";
+		}
+		// i được khởi tạo một lần (i=0), kiểm tra (i<10), thực thi, tăng (++i), kiểm tra lại...
+		// Biến i chỉ tồn tại trong phạm vi vòng lặp — không truy cập được bên ngoài
+
+##### **3.2.2. Phạm vi biến đếm**	
+
+*  Biến khai báo trong phần khởi tạo của `for` chỉ tồn tại trong **phạm vi vòng lặp**.
+
+		for (int i = 0; i < 5; ++i) { /* ... */ }
+		// std::cout << i; // LỖI BIÊN DỊCH: i không tồn tại ở đây
+
+		// Trường hợp cần biến đếm sau vòng lặp — khai báo bên ngoài:
+		int i = 0;
+		for (; i < 5; ++i) { /* ... */ }
+		std::cout << "Dừng tại: " << i;  // Hợp lệ
+
+
+##### **3.2.3. Các biến thể của vòng lặp `for`**	
+
+* Vòng lặp `for` với nhiều biến đếm:
+
+		for (int i = 0, j = 10; i < j; ++i, --j) {
+		    std::cout << i << " " << j << "\n";
+		}
+
+* Vòng lặp vô hạn (Infinite loop):
+
+		for (;;) {
+		    // Vòng lặp vô hạn — phổ biến trong main loop của embedded systems
+		    processEvents();
+		    if (shouldExit()) break;
+		}
+
+* Vòng lặp `for` với bước nhảy không đều:
+
+		for (int i = 0; i < 100; i = i * 2 + 1) {
+		    std::cout << i << " ";
+		}
+		// 0 1 3 7 15 31 63
+
+#### **3.3. Range-based `for` loop**	
+		
+##### **3.3.1. Khái niệm**	
+
+*  Range-based `for` (C++11) loại bỏ hoàn toàn việc quản lý biến đếm và biên giới mảng thủ công:
+
+		// Cú pháp:
+		for (khai_báo_biến : biểu_thức_dải) {
+		    // thân vòng lặp
+		}
+
+*  VD:
+
+		int arr[] = {10, 20, 30, 40, 50};
+
+		// Cách cũ — dễ mắc lỗi off-by-one:
+		for (int i = 0; i < 5; ++i) {
+		    std::cout << arr[i] << " ";
+		}
+
+		// Range-based for — an toàn, rõ ràng:
+		for (int val : arr) {
+		    std::cout << val << " ";
+		}
+
+		// Với std::vector, std::string, std::map...:
+		std::vector<std::string> names = {"Alice", "Bob", "Charlie"};
+		for (const auto& name : names) {
+		    std::cout << name << "\n";
+		}
+
+##### **3.3.2. Syntactic Sugar với Iterator**	
+
+*  Range-based `for` là cú pháp (syntactic sugar).
+
+*  Trình biên dịch tự động biến đổi:
+
+		for (auto x : container) { body; }
+
+	*  thành tương đương:
+
+			{
+			    auto&& __range = container;
+			    auto __begin = begin(__range);   // Gọi container.begin() hoặc begin(container)
+			    auto __end   = end(__range);     // Gọi container.end()   hoặc end(container)
+			    for (; __begin != __end; ++__begin) {
+			        auto x = *__begin;
+			        body;
+			    }
+			}
+
+		*  Bất kỳ kiểu dữ liệu nào cung cấp hàm `begin()` và `end()` (trả về iterator) đều có thể dùng với range-based `for` — bao gồm cả các lớp tự định nghĩa.
+
+##### **3.3.3. Ba chế độ truy cập biến trong range-based `for`**	
+
+		std::vector<int> nums = {1, 2, 3, 4, 5};
+
+		// Chế độ 1: Sao chép (Copy) — thay đổi không ảnh hưởng đến container gốc
+		for (auto val : nums) {
+		    val *= 2;  // nums không thay đổi
+		}
+
+		// Chế độ 2: Tham chiếu (Reference) — thay đổi TRỰC TIẾP container gốc
+		for (auto& val : nums) {
+		    val *= 2;  // nums bị thay đổi
+		}
+
+		// Chế độ 3: Tham chiếu hằng (Const reference) — đọc hiệu quả, không thay đổi
+		for (const auto& val : nums) {
+		    std::cout << val;  // Không sao chép, không cho phép thay đổi
+		}
+
+* Dùng `const auto&` khi chỉ đọc — tránh sao chép không cần thiết, đặc biệt với các đối tượng lớn (`std::string`, `std::vector`...).
+
+#### **3.4. Tối ưu hóa vòng lặp (Loop Unrolling) từ trình biên dịch**	
+		
+##### **3.3.1. Vấn đề chi phí điều khiển vòng lặp**	
+
+*  Mỗi lần lặp của vòng lặp thông thường, CPU phải thực hiện các thao tác điều khiển có chi phí:
+
+	*  Thực thi thân vòng lặp (công việc thực sự)
+	
+	*  Tăng biến đếm (++i)
+	
+	*  Kiểm tra điều kiện (i < N)
+	
+	*   Lệnh nhảy có điều kiện (branch) trở về đầu vòng lặp
+	
+		*  Branch penalty: pipeline bị gián đoạn (4-20 chu kỳ CPU tùy kiến trúc)   
+
+##### **3.3.2. Kỹ thuật Loop Unrolling**	
+
+*  Loop Unrolling (trải phẳng vòng lặp) là kỹ thuật tối ưu hóa mà trình biên dịch thực hiện tự động ở cờ `-O2`, `-O3`:
+
+	*  Compiler sao chép thân vòng lặp nhiều lần, giảm số lần kiểm tra điều kiện và nhảy.
+	
+	*  VD:
+	
+			// Mã nguồn gốc:
+			for (int i = 0; i < 8; ++i) {
+			    arr[i] = arr[i] * 2;
+			}
+
+			// Trình biên dịch tự sinh ra (tương đương mã máy):
+			arr[0] = arr[0] * 2;
+			arr[1] = arr[1] * 2;
+			arr[2] = arr[2] * 2;
+			arr[3] = arr[3] * 2;
+			arr[4] = arr[4] * 2;
+			arr[5] = arr[5] * 2;
+			arr[6] = arr[6] * 2;
+			arr[7] = arr[7] * 2;
+			// Kết quả: 0 lần nhảy, 0 lần kiểm tra điều kiện
+
+##### **3.3.3. Vectorization — Tối ưu hóa SIMD**	
+
+*  Ở cờ `-O3`, trình biên dịch còn thực hiện auto-vectorization:
+
+	*  Kết hợp nhiều phép tính thành một lệnh SIMD (Single Instruction, Multiple Data) của CPU.
+
+			// Mã nguồn:
+			for (int i = 0; i < 4; ++i) {
+			    result[i] = a[i] + b[i];
+			}
+
+			// Trình biên dịch sinh ra lệnh SIMD (ví dụ SSE/AVX trên x86):
+			// _mm_add_ps(a_vec, b_vec) — cộng 4 float cùng lúc trong một lệnh CPU duy nhất
+
+##### **3.3.4. Pragma và Attribute**	
+
+		// Gợi ý trình biên dịch unroll toàn bộ:
+		#pragma GCC unroll 4
+		for (int i = 0; i < 16; ++i) {
+		    process(arr[i]);
+		}
+
+		// Ngăn tối ưu hóa một vòng lặp cụ thể (ví dụ: delay loop trong embedded):
+		#pragma GCC optimize("O0")
+		void delay(volatile uint32_t count) {
+		    while (count--) { } // Compiler không được tối ưu hóa bỏ vòng lặp này
+		}
+
+##### **3.3.5. Câu lệnh điều hướng vòng lặp: `break` và `continue`**	
+
+		for (int i = 0; i < 100; ++i) {
+		    if (i == 50) break;     // Thoát ngay lập tức khỏi vòng lặp — i dừng tại 49
+		    if (i % 2 == 0) continue;  // Bỏ qua lần lặp hiện tại — nhảy đến bước_nhảy
+		    std::cout << i << " ";  // Chỉ in số lẻ từ 1 đến 49
+		}
+
+* `break`: Thoát khỏi **vòng lặp trong cùng** hoặc `switch` đang thực thi.
+
+*  `continue`: Bỏ qua phần còn lại của **lần lặp hiện tại**, nhảy đến bước kiểm tra điều kiện tiếp theo.
+
+* **Lưu ý với vòng lặp lồng nhau:** `break` và `continue` chỉ tác động đến vòng lặp **trong cùng** trực tiếp bao quanh chúng.
+
+			for (int i = 0; i < 3; ++i) {
+			    for (int j = 0; j < 3; ++j) {
+			        if (j == 1) break;  // Chỉ thoát vòng lặp j — vòng lặp i tiếp tục
+			        std::cout << i << "," << j << " ";
+			    }
+			}
+			// In ra: 0,0  1,0  2,0
+																										
+   </details> 
+
